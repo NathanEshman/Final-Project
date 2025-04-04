@@ -1,7 +1,7 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # Main program
-# Team: heyy
+# Team: 
 #################################teststshsfsg
 
 # import the configs
