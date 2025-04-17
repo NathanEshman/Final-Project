@@ -301,13 +301,27 @@ class Toggles(PhaseThread):
 
     # runs the thread
     def run(self):
-        # TODO
-        pass
+        self._running = True
+        while self._running:
+            # Read switches 1 and 3 (index 0 and 2) for disallowed values
+            if self._component[0].value or self._component[2].value:
+                self._failed = True
+                self._running = False
+                continue
 
-    # returns the toggle switches state as a string
-    def __str__(self):
-        if (self._defused):
+            # Read switches 2 and 4 (index 1 and 3)
+            bits = [str(int(self._component[i].value)) for i in (1, 3)]
+            self._value = "".join(bits)
+
+            if self._value == self._target:
+                self._defused = True
+                self._running = False
+            elif len(self._value) == len(self._target) and self._value != self._target:
+                self._failed = True
+                self._running = False
+            sleep(0.1)
+    
+     def __str__(self):
+        if self._defused:
             return "DEFUSED"
-        else:
-            # TODO
-            pass
+        return f"{self._value}"
