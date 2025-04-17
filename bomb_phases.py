@@ -325,3 +325,49 @@ class Toggles(PhaseThread):
         if self._defused:
             return "DEFUSED"
         return f"{self._value}"
+    
+class TriviaFrame(Frame):
+    def __init__(self, master, toggles=None, return_callback=None):
+        super().__init__(master, bg="black")
+        self.pack(fill=BOTH, expand=True)
+        self.toggles = toggles  # list of toggle pins (DigitalInOut)
+        self.return_callback = return_callback
+        self.question = "What is the first thing that Phineas and Ferb build?"
+        self.options = ["a skyscraper", "spaceship", "restaurant", "a roller coaster"]
+        self.correct = "a roller coaster"
+
+        Label(self, text=self.question, fg="white", bg="black",
+              font=("Courier New", 20), wraplength=800).pack(pady=20)
+
+        for opt in self.options:
+            Button(self, text=opt, font=("Courier New", 16),
+                   bg="gray20", fg="white", width=30,
+                   command=lambda o=opt: self.check_answer(o)).pack(pady=5)
+
+        self.result = Label(self, text="", fg="white", bg="black", font=("Courier New", 16))
+        self.result.pack(pady=20)
+
+        # NEW toggle status display
+        self.toggle_status = Label(self, text="Toggles: ----", fg="yellow", bg="black", font=("Courier New", 16))
+        self.toggle_status.pack(pady=10)
+
+        Button(self, text="Return to Main", font=("Courier New", 16),
+               bg="red", fg="white", command=self.return_main).pack(pady=20)
+
+        self.poll_toggles()  # Start polling
+
+    def check_answer(self, selected):
+        if selected == self.correct:
+            self.result.config(text="Correct! 🎉", fg="lime")
+        else:
+            self.result.config(text="Wrong! ❌", fg="red")
+
+    def poll_toggles(self):
+        if self.toggles:
+            state = "".join(str(int(pin.value)) for pin in self.toggles)
+            self.toggle_status.config(text=f"Toggles: {state}")
+        self.after(100, self.poll_toggles)
+
+    def return_main(self):
+        if self.return_callback:
+            self.return_callback()
