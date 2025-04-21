@@ -319,7 +319,7 @@ class Toggles(PhaseThread):
             elif len(self._value) == len(self._target) and self._value != self._target:
                 self._failed = True
                 self._running = False
-            sleep(0.1)
+            sleep(0.1) 
     
      def __str__(self):
         if self._defused:
