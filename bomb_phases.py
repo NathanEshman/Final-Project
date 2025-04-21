@@ -141,35 +141,52 @@ class PhaseThread(Thread):
         self._running = False
 
 # the timer phase
+
+#Adjusting the timer seciton so that we can set the timer values and countdown. 
 class Timer(PhaseThread):
     def __init__(self, component, initial_value, name="Timer"):
         super().__init__(name, component)
-        # the default value is the specified initial value
+        # total remaining time in seconds
         self._value = initial_value
-        # is the timer paused?
+        # pause‑flag
         self._paused = False
-        # initialize the timer's minutes/seconds representation
-        self._min = ""
-        self._sec = ""
-        # by default, each tick is 1 second
+        # formatted minute/second strings
+        self._min = "00"
+        self._sec = "00"
+        # tick interval (seconds)
         self._interval = 1
 
-    # runs the thread
+    def _update(self):
+        """Recompute the mm:ss display from the remaining seconds."""
+        mins, secs = divmod(max(self._value, 0), 60)
+        self._min = f"{mins:02}"
+        self._sec = f"{secs:02}"
+
+    def __str__(self):
+        """What gets printed to the 7‑segment display."""
+        return f"{self._min}:{self._sec}"
+
     def run(self):
         self._running = True
-        while (self._running):
-            if (not self._paused):
-                # update the timer and display its value on the 7-segment display
+        while self._running:
+            if not self._paused:
+                # refresh display
                 self._update()
                 self._component.print(str(self))
-                # wait 1s (default) and continue
-                sleep(self._interval)
-                # the timer has expired -> phase failed (explode)
-                if (self._value == 0):
+
+                # if we’re at zero, stop and trigger failure
+                if self._value <= 0:
                     self._running = False
-                self._value -= 1
+                    self._component.explode()   # or whatever signals phase failure
+                    break
+
+                # wait a second, then decrement
+                time.sleep(self._interval)
+                self._value -= self._interval
             else:
-                sleep(0.1)
+                # when paused, just poll the flag
+                time.sleep(0.1)
+
 
     # updates the timer (only internally called)
     def _update(self):
