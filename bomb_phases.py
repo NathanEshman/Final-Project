@@ -242,28 +242,32 @@ class Keypad(PhaseThread):
         else:
             return self._value
 
-# the jumper wires phase
+
+# # the jumper wires phase (UPDATED - PRIMARY COLOR UNPLUGGING)
+PRIMARY_COLORS = {"Red", "Blue", "Yellow"}
+
 class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
-        # Associate each wire with an index (e.g., numeric or alphabetic identifiers)
         self.wire_indexes = ["1", "2", "3", "4"]  # Our wire indexes
-        self.wire_states = [True] * len(self.wire_indexes)  # True means wire is initially plugged
+        self.wire_states = [True] * len(self.wire_indexes)
+        
+        # Assign each wire a color
+        self.wire_colors = [choice(["Red", "Blue", "Yellow", "Green", "White", "Black"]) for _ in self.wire_indexes]
 
-    def run(self):
+     def run(self):
         self._running = True
         while self._running:
-            # Update wire states based on component values
-            for i, wire in enumerate(self._component):
-                self.wire_states[i] = wire.value  # wire.value should reflect plugged/unplugged
+            for i, pin in enumerate(self._component):
+                self.wire_states[i] = pin.value  # True = plugged, False = unplugged
 
-            # Check if the wires unplugged match the target
-            current_state = "".join(["0" if state else "1" for state in self.wire_states])
+            unplugged_colors = {color for color, state in zip(self.wire_colors, self.wire_states) if not state}
+            plugged_colors = {color for color, state in zip(self.wire_colors, self.wire_states) if state}
 
-            if current_state == self._target:
+            if unplugged_colors == PRIMARY_COLORS and PRIMARY_COLORS.isdisjoint(plugged_colors):
                 self._defused = True
                 self._running = False
-            elif len(current_state) == len(self._target) and current_state != self._target:
+            elif not PRIMARY_COLORS.issubset(unplugged_colors):
                 self._failed = True
                 self._running = False
 
@@ -272,8 +276,10 @@ class Wires(PhaseThread):
     def __str__(self):
         if self._defused:
             return "DEFUSED"
-        return " ".join([f"{idx}:{'Plugged' if state else 'Unplugged'}" 
-                         for idx, state in zip(self.wire_indexes, self.wire_states)])
+        return " ".join([
+            f"{idx}:{'Unplugged' if not state else 'Plugged'}({color})"
+            for idx, state, color in zip(self.wire_indexes, self.wire_states, self.wire_colors)
+        ])
 
 
 # the pushbutton phase
