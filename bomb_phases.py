@@ -206,34 +206,52 @@ class Timer(PhaseThread):
 
 # the keypad phase
 class Keypad(PhaseThread):
-    def __init__(self, component, target, name="Keypad"):
+    def __init__(self, component, target, name="Keypad", max_length=10):
         super().__init__(name, component, target)
-        # the default value is an empty string
         self._value = ""
+        self._max_length = max_length
+        self._paused = False
 
-    # runs the thread
+    # Allow external pause (e.g., during animations or timeouts)
+    def pause(self):
+        self._paused = True
+
+    def resume(self):
+        self._paused = False
+
+    # Optional: Get current input for UI display
+    def get_value(self):
+        return self._value
+
+    # Main loop
     def run(self):
         self._running = True
-        while (self._running):
-            # process keys when keypad key(s) are pressed
-            if (self._component.pressed_keys):
-                # debounce
-                while (self._component.pressed_keys):
+        while self._running:
+            if not self._paused and self._component.pressed_keys:
+                # Debounce
+                while self._component.pressed_keys:
                     try:
-                        # just grab the first key pressed if more than one were pressed
                         key = self._component.pressed_keys[0]
-                    except:
+                    except IndexError:
                         key = ""
                     sleep(0.1)
-                # log the key
-                self._value += str(key)
-                # the combination is correct -> phase defused
-                if (self._value == self._target):
+
+                # Only accept input if under max length
+                if len(self._value) < self._max_length:
+                    self._value += str(key)
+
+                # Check result
+                if self._value == self._target:
                     self._defused = True
-                # the combination is incorrect -> phase failed (strike)
-                elif (self._value != self._target[0:len(self._value)]):
+                    print("Keypad: Correct code entered!")
+                    self._running = False  # Optionally stop the thread
+                elif not self._target.startswith(self._value):
                     self._failed = True
+                    print("Keypad: Incorrect code entered!")
+                    self._running = False  # Optionally stop the thread
+
             sleep(0.1)
+
 
     # returns the keypad combination as a string
     def __str__(self):
