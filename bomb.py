@@ -34,6 +34,11 @@ def bootup(n=0):
         # scroll the next character after a slight delay (\x00 is a longer delay)
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
+
+def check_keypad():
+    return keypad._value == keypad._target
+
+
 # sets up the phase threads
 def setup_phases():
     global timer, keypad, wires, button, toggles
@@ -47,7 +52,7 @@ def setup_phases():
     # setup the jumper wires thread
     wires = Wires(component_wires, wires_target)
     # setup the pushbutton thread
-    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
+    button = Button(component_button_state, component_button_RGB, check_keypad)
     # bind the pushbutton to the LCD GUI so that its LED can be turned off when we quit
     gui.setButton(button)
     # setup the toggle switches thread
