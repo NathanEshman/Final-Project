@@ -141,35 +141,52 @@ class PhaseThread(Thread):
         self._running = False
 
 # the timer phase
+
+#Adjusting the timer seciton so that we can set the timer values and countdown. 
 class Timer(PhaseThread):
     def __init__(self, component, initial_value, name="Timer"):
         super().__init__(name, component)
-        # the default value is the specified initial value
+        # total remaining time in seconds
         self._value = initial_value
-        # is the timer paused?
+        # pause‑flag
         self._paused = False
-        # initialize the timer's minutes/seconds representation
-        self._min = ""
-        self._sec = ""
-        # by default, each tick is 1 second
+        # formatted minute/second strings
+        self._min = "00"
+        self._sec = "00"
+        # tick interval (seconds)
         self._interval = 1
 
-    # runs the thread
+    def _update(self):
+        """Recompute the mm:ss display from the remaining seconds."""
+        mins, secs = divmod(max(self._value, 0), 60)
+        self._min = f"{mins:02}"
+        self._sec = f"{secs:02}"
+
+    def __str__(self):
+        """What gets printed to the 7‑segment display."""
+        return f"{self._min}:{self._sec}"
+
     def run(self):
         self._running = True
-        while (self._running):
-            if (not self._paused):
-                # update the timer and display its value on the 7-segment display
+        while self._running:
+            if not self._paused:
+                # refresh display
                 self._update()
                 self._component.print(str(self))
-                # wait 1s (default) and continue
-                sleep(self._interval)
-                # the timer has expired -> phase failed (explode)
-                if (self._value == 0):
+
+                # if we’re at zero, stop and trigger failure
+                if self._value <= 0:
                     self._running = False
-                self._value -= 1
+                    self._component.explode()   # or whatever signals phase failure
+                    break
+
+                # wait a second, then decrement
+                time.sleep(self._interval)
+                self._value -= self._interval
             else:
-                sleep(0.1)
+                # when paused, just poll the flag
+                time.sleep(0.1)
+
 
     # updates the timer (only internally called)
     def _update(self):
@@ -229,19 +246,35 @@ class Keypad(PhaseThread):
 class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
+        # Associate each wire with an index (e.g., numeric or alphabetic identifiers)
+        self.wire_indexes = ["1", "2", "3", "4"]  # Our wire indexes
+        self.wire_states = [True] * len(self.wire_indexes)  # True means wire is initially plugged
 
-    # runs the thread
     def run(self):
-        # TODO
-        pass
+        self._running = True
+        while self._running:
+            # Update wire states based on component values
+            for i, wire in enumerate(self._component):
+                self.wire_states[i] = wire.value  # wire.value should reflect plugged/unplugged
 
-    # returns the jumper wires state as a string
+            # Check if the wires unplugged match the target
+            current_state = "".join(["0" if state else "1" for state in self.wire_states])
+
+            if current_state == self._target:
+                self._defused = True
+                self._running = False
+            elif len(current_state) == len(self._target) and current_state != self._target:
+                self._failed = True
+                self._running = False
+
+            sleep(0.1)
+
     def __str__(self):
-        if (self._defused):
+        if self._defused:
             return "DEFUSED"
-        else:
-            # TODO
-            pass
+        return " ".join([f"{idx}:{'Plugged' if state else 'Unplugged'}" 
+                         for idx, state in zip(self.wire_indexes, self.wire_states)])
+
 
 # the pushbutton phase
 class Button(PhaseThread):
@@ -321,7 +354,7 @@ class Toggles(PhaseThread):
                 self._running = False
             sleep(0.1) 
     
-     def __str__(self):
+    def __str__(self):
         if self._defused:
             return "DEFUSED"
         return f"{self._value}"
