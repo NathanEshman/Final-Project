@@ -1,7 +1,7 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # Main program
-# Team: 
+# Team: Diego Diaz, Elianna Ayala, Nathan Eshman
 #################################
 
 # import the configs

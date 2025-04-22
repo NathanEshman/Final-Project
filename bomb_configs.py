@@ -1,7 +1,7 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # Configuration file
-# Team: 
+# Team: Diego Diaz, ELianna Ayala, Nathan Eshman
 #################################
 
 # constants
