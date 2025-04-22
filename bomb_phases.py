@@ -243,7 +243,7 @@ class Keypad(PhaseThread):
             return self._value
 
 
-# # the jumper wires phase (UPDATED - PRIMARY COLOR UNPLUGGING)
+# the jumper wires phase (UPDATED - PRIMARY COLOR UNPLUGGING)
 PRIMARY_COLORS = {"Red", "Blue", "Yellow"}
 
 class Wires(PhaseThread):
