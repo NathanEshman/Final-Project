@@ -172,6 +172,11 @@ def turn_off():
     # turn off the pushbutton's LED
     for pin in button._rgb:
         pin.value = True
+        
+def start_main_game():
+    # This is where you start the actual game UI setup
+    game_ui = Lcd(window)  # or your main game class
+    game_ui.pack()
 
 ######
 # MAIN
@@ -179,6 +184,9 @@ def turn_off():
 
 # initialize the LCD GUI
 window = Tk()
+
+start_screen = StartScreen(window, start_main_game)
+
 gui = Lcd(window)
 
 # initialize the bomb strikes and active phases (i.e., not yet defused)

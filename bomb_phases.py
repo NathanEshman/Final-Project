@@ -122,6 +122,30 @@ class Lcd(Frame):
                 pin.value = True
         # exit the application
         exit(0)
+        
+class StartScreen(Toplevel):
+    def __init__(self, master, start_callback):
+        super().__init__(master)
+        self.start_callback = start_callback
+        self.configure(bg="black")
+        self.attributes("-fullscreen", True)
+
+        # Title
+        Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
+              font=("Courier New", 48, "bold")).pack(pady=100)
+
+        # Subtitle or team name
+        Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
+              fg="white", bg="black", font=("Courier New", 20)).pack(pady=20)
+
+        # Continue button
+        Button(self, text="CONTINUE", command=self.start_game,
+               font=("Courier New", 24), bg="gray20", fg="white",
+               activebackground="green", activeforeground="black").pack(pady=100)
+
+    def start_game(self):
+        self.destroy()  # Close start screen
+        self.start_callback()  # Trigger the game start logic
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
@@ -273,7 +297,7 @@ class Wires(PhaseThread):
         # Assign each wire a color
         self.wire_colors = [choice(["Red", "Blue", "Yellow", "Green", "White", "Black"]) for _ in self.wire_indexes]
 
-     def run(self):
+    def run(self):
         self._running = True
         while self._running:
             for i, pin in enumerate(self._component):
@@ -377,6 +401,7 @@ class Toggles(PhaseThread):
                 self._failed = True
                 self._running = False
             sleep(0.1) 
+    
     
     def __str__(self):
         if self._defused:
