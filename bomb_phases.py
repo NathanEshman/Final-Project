@@ -14,6 +14,9 @@ from time import sleep
 import os
 import sys
 
+from tkvideo import tkvideo
+
+
 #########
 # classes
 #########
@@ -147,29 +150,33 @@ class StartScreen(Toplevel):
         self.destroy()  # Close start screen
         self.start_callback()  # Trigger the game start logic
         
-        
+
 class VictoryScreen(Toplevel):
     def __init__(self, master, on_quit=None):
         super().__init__(master)
         self.configure(bg="black")
         self.attributes("-fullscreen", True)
 
-        # Main victory text
-        Label(self, text="VICTORY!", fg="lime", bg="black",
-              font=("Courier New", 60, "bold")).pack(pady=120)
+        # Create a Label to hold the video
+        self.video_label = Label(self)
+        self.video_label.pack()
 
-        # Optional subtext
-        Label(self, text="You successfully defused the bomb.",
-              fg="white", bg="black", font=("Courier New", 24)).pack(pady=20)
+        # Path to your video file
+        video_path = "victoryvideo.mp4"  # <-- put your video in the project folder or give full path
 
-        # Button to quit the game
+        # Play the video (loop = 1 to repeat, 0 for no loop)
+        player = tkvideo(video_path, self.video_label, loop=0, size=(800, 600))
+        player.play()
+
+        # Add a Quit button below
         Button(self, text="EXIT GAME", command=on_quit or self.quit_game,
                font=("Courier New", 20), bg="gray20", fg="white",
-               activebackground="red", activeforeground="white").pack(pady=80)
+               activebackground="red", activeforeground="white").pack(pady=20)
 
     def quit_game(self):
         self.quit()
         self.destroy()
+
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
