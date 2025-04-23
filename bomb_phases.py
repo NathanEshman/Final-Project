@@ -13,6 +13,7 @@ from threading import Thread
 from time import sleep
 import os
 import sys
+from PIL import Image, ImageTk
 
 #########
 # classes
@@ -68,6 +69,21 @@ class Lcd(Frame):
             # the quit button
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
+        
+        # NEW IMAGE INSERTED BELOW PHASE LABELS
+        try:
+            raw_img = Image.open("Ratinpipesmap.jpg")
+            raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
+            self.map_image = ImageTk.PhotoImage(raw_img)
+            Label(self, image=self.map_image, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
+        except Exception as e:
+            Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
+
+        if SHOW_BUTTONS:
+            self._bpause = Button(..., command=self.pause)
+            self._bpause.grid(...)
+            self._bquit = Button(..., command=self.quit)
+            self._bquit.grid(...)
 
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
