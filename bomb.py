@@ -9,6 +9,8 @@ from bomb_configs import *
 # import the phases
 from bomb_phases import *
 
+from bomb_phases import VictoryScreen
+
 ###########
 # functions
 ###########
@@ -149,6 +151,9 @@ def check_phases():
         # turn off the bomb and render the conclusion GUI
         turn_off()
         gui.after(100, gui.conclusion, True)
+        
+        # 🟢 NEW: Show the Victory screen
+        VictoryScreen(window)
         # stop checking phases
         return
 

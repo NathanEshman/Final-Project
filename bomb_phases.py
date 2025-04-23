@@ -146,6 +146,30 @@ class StartScreen(Toplevel):
     def start_game(self):
         self.destroy()  # Close start screen
         self.start_callback()  # Trigger the game start logic
+        
+        
+class VictoryScreen(Toplevel):
+    def __init__(self, master, on_quit=None):
+        super().__init__(master)
+        self.configure(bg="black")
+        self.attributes("-fullscreen", True)
+
+        # Main victory text
+        Label(self, text="VICTORY!", fg="lime", bg="black",
+              font=("Courier New", 60, "bold")).pack(pady=120)
+
+        # Optional subtext
+        Label(self, text="You successfully defused the bomb.",
+              fg="white", bg="black", font=("Courier New", 24)).pack(pady=20)
+
+        # Button to quit the game
+        Button(self, text="EXIT GAME", command=on_quit or self.quit_game,
+               font=("Courier New", 20), bg="gray20", fg="white",
+               activebackground="red", activeforeground="white").pack(pady=80)
+
+    def quit_game(self):
+        self.quit()
+        self.destroy()
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
@@ -453,7 +477,8 @@ class TriviaFrame(Frame):
             self.toggle_status.config(text=f"Toggles: {state}")
         self.after(100, self.poll_toggles)
 
-    def return_main(self):        if self.return_callback:
+    def return_main(self):
+        if self.return_callback:
             self.return_callback()
             
     def check_trivia():
