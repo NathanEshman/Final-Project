@@ -192,3 +192,15 @@ def start_main_game():
     strikes_left = NUM_STRIKES
     active_phases = NUM_PHASES
     gui.after(1000, bootup)  # Boot up sequence after main screen is visible
+
+
+###### MAIN ######
+
+window = Tk()
+
+# Start Screen first
+start_screen = StartScreen(window, start_main_game)
+
+# DO NOT create `gui = Lcd(window)` here anymore!
+
+window.mainloop()
