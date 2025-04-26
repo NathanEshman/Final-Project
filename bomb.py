@@ -184,27 +184,11 @@ def turn_off():
         pin.value = True
         
 def start_main_game():
-    # This is where you start the actual game UI setup
-    game_ui = Lcd(window)  # or your main game class
-    game_ui.pack()
-
-######
-# MAIN
-######
-
-# initialize the LCD GUI
-window = Tk()
-
-start_screen = StartScreen(window, start_main_game)
-
-gui = Lcd(window)
-
-# initialize the bomb strikes and active phases (i.e., not yet defused)
-strikes_left = NUM_STRIKES
-active_phases = NUM_PHASES
-
-# "boot" the bomb
-gui.after(1000, bootup)
-
-# display the LCD GUI
-window.mainloop()
+    global gui
+    gui = Lcd(window)  # Now only create the main GUI AFTER start screen is gone
+    gui.pack()
+    # initialize the bomb strikes and active phases
+    global strikes_left, active_phases
+    strikes_left = NUM_STRIKES
+    active_phases = NUM_PHASES
+    gui.after(1000, bootup)  # Boot up sequence after main screen is visible
