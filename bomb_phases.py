@@ -142,35 +142,52 @@ class Lcd(Frame):
         # exit the application
         exit(0)
         
+
 class StartScreen(Toplevel):
-    def __init__(self, master, start_callback):
+    def __init__(self, master, start_callback, use_rpi_button=False):
         super().__init__(master)
         self.start_callback = start_callback
         self.configure(bg="black")
+        self.attributes("-fullscreen", True)
 
-        # Replace fullscreen for now with fixed geometry (for testing)
-        self.geometry("800x600")
-
-        # Title
         Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
               font=("Courier New", 48, "bold")).pack(pady=60)
 
-        # Subtitle or team name
         Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
               fg="white", bg="black", font=("Courier New", 18)).pack(pady=10)
 
-        # Continue button - make sure it’s visible
-        Button(self, text="CONTINUE", command=self.start_game,
-               font=("Courier New", 20), bg="gray20", fg="white",
-               activebackground="green", activeforeground="black",
-               width=20, height=2).pack(pady=60)
+        # Show CONTINUE button only if not using RPi button
+        if not use_rpi_button:
+            Button(self, text="CONTINUE", command=self.start_game,
+                   font=("Courier New", 20), bg="gray20", fg="white",
+                   activebackground="green", activeforeground="black",
+                   width=20, height=2).pack(pady=60)
+
+        # ENTER key support
+        self.bind("<Return>", lambda e: self.start_game())
+        self.focus_set()
+
+        # RPi GPIO pushbutton support
+        if use_rpi_button and RPi:
+            import board
+            from digitalio import DigitalInOut, Direction, Pull
+
+            self.start_button_pin = DigitalInOut(board.D4)
+            self.start_button_pin.direction = Direction.INPUT
+            self.start_button_pin.pull = Pull.DOWN
+            self.poll_gpio()
+
+    def poll_gpio(self):
+        if self.start_button_pin.value:
+            self.start_game()
+        else:
+            self.after(100, self.poll_gpio)
 
     def start_game(self):
         self.destroy()
         self.start_callback()
 
-        
-
+       
 class VictoryScreen(Toplevel):
     def __init__(self, master, on_quit=None):
         super().__init__(master)
