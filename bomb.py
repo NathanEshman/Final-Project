@@ -11,6 +11,9 @@ from bomb_phases import *
 
 from bomb_phases import VictoryScreen
 
+from bomb_phases import StartScreen
+
+start_screen = StartScreen(window, start_main_game, use_rpi_button=True)
 ###########
 # functions
 ###########
@@ -194,10 +197,4 @@ def start_main_game():
     gui.after(1000, bootup)  # Boot up sequence after main screen is visible
 
 
-window = Tk()
-window.configure(bg="black")
-window.attributes("-fullscreen", True)
 
-start_screen = StartScreen(window, start_main_game, use_rpi_button=True)  # Enable GPIO button
-
-window.mainloop()

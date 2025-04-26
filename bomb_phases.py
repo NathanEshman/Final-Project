@@ -143,12 +143,12 @@ class Lcd(Frame):
         exit(0)
         
 
-class StartScreen(Toplevel):
+class StartScreen(Frame):
     def __init__(self, master, start_callback, use_rpi_button=False):
-        super().__init__(master)
+        super().__init__(master, bg="black")
+        self.master = master
         self.start_callback = start_callback
-        self.configure(bg="black")
-        self.attributes("-fullscreen", True)
+        self.pack(fill=BOTH, expand=True)
 
         Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
               font=("Courier New", 48, "bold")).pack(pady=60)
@@ -156,18 +156,15 @@ class StartScreen(Toplevel):
         Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
               fg="white", bg="black", font=("Courier New", 18)).pack(pady=10)
 
-        # Show CONTINUE button only if not using RPi button
         if not use_rpi_button:
             Button(self, text="CONTINUE", command=self.start_game,
                    font=("Courier New", 20), bg="gray20", fg="white",
                    activebackground="green", activeforeground="black",
                    width=20, height=2).pack(pady=60)
 
-        # ENTER key support
         self.bind("<Return>", lambda e: self.start_game())
         self.focus_set()
 
-        # RPi GPIO pushbutton support
         if use_rpi_button and RPi:
             import board
             from digitalio import DigitalInOut, Direction, Pull
@@ -187,7 +184,7 @@ class StartScreen(Toplevel):
         self.destroy()
         self.start_callback()
 
-       
+
 class VictoryScreen(Toplevel):
     def __init__(self, master, on_quit=None):
         super().__init__(master)
