@@ -194,13 +194,10 @@ def start_main_game():
     gui.after(1000, bootup)  # Boot up sequence after main screen is visible
 
 
-###### MAIN ######
-
 window = Tk()
+window.configure(bg="black")
+window.attributes("-fullscreen", True)
 
-# Start Screen first
-start_screen = StartScreen(window, start_main_game)
-
-# DO NOT create `gui = Lcd(window)` here anymore!
+start_screen = StartScreen(window, start_main_game, use_rpi_button=True)  # Enable GPIO button
 
 window.mainloop()
