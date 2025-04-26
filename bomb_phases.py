@@ -147,24 +147,28 @@ class StartScreen(Toplevel):
         super().__init__(master)
         self.start_callback = start_callback
         self.configure(bg="black")
-        self.attributes("-fullscreen", True)
+
+        # Replace fullscreen for now with fixed geometry (for testing)
+        self.geometry("800x600")
 
         # Title
         Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
-              font=("Courier New", 48, "bold")).pack(pady=100)
+              font=("Courier New", 48, "bold")).pack(pady=60)
 
         # Subtitle or team name
         Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
-              fg="white", bg="black", font=("Courier New", 20)).pack(pady=20)
+              fg="white", bg="black", font=("Courier New", 18)).pack(pady=10)
 
-        # Continue button
+        # Continue button - make sure it’s visible
         Button(self, text="CONTINUE", command=self.start_game,
-               font=("Courier New", 24), bg="gray20", fg="white",
-               activebackground="green", activeforeground="black").pack(pady=100)
+               font=("Courier New", 20), bg="gray20", fg="white",
+               activebackground="green", activeforeground="black",
+               width=20, height=2).pack(pady=60)
 
     def start_game(self):
-        self.destroy()  # Close start screen
-        self.start_callback()  # Trigger the game start logic
+        self.destroy()
+        self.start_callback()
+
         
 
 class VictoryScreen(Toplevel):
