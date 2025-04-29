@@ -55,7 +55,7 @@ class Lcd(tk.Frame):
             self._bquit.grid(row=6, column=2, pady=40)
 
         try:
-            raw_img = Image.open("Ratinpipesmap.jpg")
+            raw_img = Image.open("/home/pi/Final-Project/Ratinpipesmap.jpg")
             raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
             self.map_image = Image.PhotoImage(raw_img)
             tk.Label(self, image=self.map_image, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
