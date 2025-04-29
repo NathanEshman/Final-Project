@@ -14,9 +14,15 @@ import sys
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from PIL import Image
 
 
+=======
+
+
+
+>>>>>>> Stashed changes
 =======
 
 
@@ -75,6 +81,7 @@ class Lcd(tk.Frame):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         try:
             raw_img = Image.open("/spartans/Final-Project/Ratinpipesmap.jpg")
             raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
@@ -83,6 +90,9 @@ class Lcd(tk.Frame):
         except Exception as e:
             tk.Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
 
+=======
+        
+>>>>>>> Stashed changes
 =======
         
 >>>>>>> Stashed changes
