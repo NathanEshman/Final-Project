@@ -13,7 +13,7 @@ from bomb_phases import VictoryScreen
 
 from bomb_phases import StartScreen
 
-start_screen = StartScreen(window, start_main_game, use_rpi_button=True)
+
 ###########
 # functions
 ###########

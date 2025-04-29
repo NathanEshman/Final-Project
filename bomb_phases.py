@@ -13,9 +13,9 @@ from threading import Thread
 from time import sleep
 import os
 import sys
-from PIL import Image, ImageTk
+from PIL import Image
 
-from tkvideo import tkvideo
+
 
 
 #########
