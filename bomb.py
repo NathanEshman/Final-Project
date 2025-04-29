@@ -47,28 +47,22 @@ def check_keypad():
 # sets up the phase threads
 def setup_phases():
     global timer, keypad, wires, button, toggles
-    
-    # setup the timer thread
+
     timer = Timer(component_7seg, COUNTDOWN)
-    # bind the 7-segment display to the LCD GUI so that it can be paused/unpaused from the GUI
     gui.setTimer(timer)
-    # setup the keypad thread
+
     keypad = Keypad(component_keypad, keypad_target)
-    # setup the jumper wires thread
     wires = Wires(component_wires, wires_target)
-    # setup the pushbutton thread
-    button = Button(component_button_state, component_button_RGB, check_keypad)
-    # bind the pushbutton to the LCD GUI so that its LED can be turned off when we quit
+    button = Button(component_button_state, component_button_RGB, check_all_phases)
     gui.setButton(button)
-    # setup the toggle switches thread
     toggles = Toggles(component_toggles, toggles_target)
 
-    # start the phase threads
     timer.start()
     keypad.start()
     wires.start()
     button.start()
     toggles.start()
+
 
 # checks the phase threads
 def check_phases():
