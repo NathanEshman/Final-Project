@@ -11,7 +11,7 @@ from threading import Thread
 from time import sleep
 import os
 import sys
-from PIL import ImageTk
+from PIL import Image
 
 
 #########
@@ -57,7 +57,7 @@ class Lcd(tk.Frame):
         try:
             raw_img = Image.open("Ratinpipesmap.jpg")
             raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
-            self.map_image = ImageTk.PhotoImage(raw_img)
+            self.map_image = Image.PhotoImage(raw_img)
             tk.Label(self, image=self.map_image, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
         except Exception as e:
             tk.Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
