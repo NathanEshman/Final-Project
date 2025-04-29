@@ -11,13 +11,8 @@ from threading import Thread
 from time import sleep
 import os
 import sys
-from PIL import Image
-<<<<<<< HEAD
-=======
+from PIL import ImageTk
 
-
-
->>>>>>> ba0bcab9bf7265346a3fedc60511389b8afccb70
 
 #########
 # classes
