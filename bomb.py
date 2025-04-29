@@ -13,7 +13,7 @@ from bomb_phases import VictoryScreen
 
 from bomb_phases import StartScreen
 
-start_screen = StartScreen(window, start_main_game, use_rpi_button=True)
+
 ###########
 # functions
 ###########
@@ -196,5 +196,17 @@ def start_main_game():
     active_phases = NUM_PHASES
     gui.after(1000, bootup)  # Boot up sequence after main screen is visible
 
+from tkinter import Tk
+
+# Create the main window
+window = Tk()
+window.title("Defuse the Bomb")
+window.geometry("480x320")  # Adjust if needed
+
+# Start the StartScreen
+StartScreen(window, start_callback=start_main_game, use_rpi_button=True)
+
+# Run the GUI loop
+window.mainloop()
 
 

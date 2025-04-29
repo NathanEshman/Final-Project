@@ -1,109 +1,77 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # GUI and Phase class definitions
-# Team:Diego Diaz, Elianna Ayala, Nathan Eshman 
+# Team: Diego Diaz, Elianna Ayala, Nathan Eshman
 #################################
 
-# import the configs
+# imports
+import tkinter as tk
 from bomb_configs import *
-# other imports
-from tkinter import *
-import tkinter
 from threading import Thread
 from time import sleep
 import os
 import sys
-from PIL import Image, ImageTk
-
-from tkvideo import tkvideo
-
+from PIL import Image
 
 #########
 # classes
 #########
-# the LCD display GUI
-class Lcd(Frame):
+
+class Lcd(tk.Frame):
     def __init__(self, window):
         super().__init__(window, bg="black")
-        # make the GUI fullscreen
         window.attributes("-fullscreen", True)
-        # we need to know about the timer (7-segment display) to be able to pause/unpause it
         self._timer = None
-        # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
-        # setup the initial "boot" GUI
         self.setupBoot()
 
-    # sets up the LCD "boot" GUI
     def setupBoot(self):
-        # set column weights
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
         self.columnconfigure(2, weight=1)
-        # the scrolling informative "boot" text
-        self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
-        self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
-        self.pack(fill=BOTH, expand=True)
+        self._lscroll = tk.Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=tk.LEFT)
+        self._lscroll.grid(row=0, column=0, columnspan=3, sticky=tk.W)
+        self.pack(fill=tk.BOTH, expand=True)
 
-    # sets up the LCD GUI
     def setup(self):
-        # the timer
-        self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
-        self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
-        # the keypad passphrase
-        self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Keypad phase: ")
-        self._lkeypad.grid(row=2, column=0, columnspan=3, sticky=W)
-        # the jumper wires status
-        self._lwires = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Wires phase: ")
-        self._lwires.grid(row=3, column=0, columnspan=3, sticky=W)
-        # the pushbutton status
-        self._lbutton = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Button phase: ")
-        self._lbutton.grid(row=4, column=0, columnspan=3, sticky=W)
-        # the toggle switches status
-        self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Toggles phase: ")
-        self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
-        # the strikes left
-        self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
-        self._lstrikes.grid(row=5, column=2, sticky=W)
-        if (SHOW_BUTTONS):
-            # the pause button (pauses the timer)
-            self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
+        self._ltimer = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
+        self._ltimer.grid(row=1, column=0, columnspan=3, sticky=tk.W)
+        self._lkeypad = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Keypad phase: ")
+        self._lkeypad.grid(row=2, column=0, columnspan=3, sticky=tk.W)
+        self._lwires = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Wires phase: ")
+        self._lwires.grid(row=3, column=0, columnspan=3, sticky=tk.W)
+        self._lbutton = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Button phase: ")
+        self._lbutton.grid(row=4, column=0, columnspan=3, sticky=tk.W)
+        self._ltoggles = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Toggles phase: ")
+        self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=tk.W)
+        self._lstrikes = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
+        self._lstrikes.grid(row=5, column=2, sticky=tk.W)
+
+        if SHOW_BUTTONS:
+            self._bpause = tk.Button(self, text="Pause", font=("Courier New", 18), bg="red", fg="white", command=self.pause)
             self._bpause.grid(row=6, column=0, pady=40)
-            # the quit button
-            self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
+            self._bquit = tk.Button(self, text="Quit", font=("Courier New", 18), bg="red", fg="white", command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
-        
-        # NEW IMAGE INSERTED BELOW PHASE LABELS
+
         try:
             raw_img = Image.open("Ratinpipesmap.jpg")
             raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
             self.map_image = ImageTk.PhotoImage(raw_img)
-            Label(self, image=self.map_image, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
+            tk.Label(self, image=self.map_image, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
         except Exception as e:
-            Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
+            tk.Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
 
-        if SHOW_BUTTONS:
-            self._bpause = Button(..., command=self.pause)
-            self._bpause.grid(...)
-            self._bquit = Button(..., command=self.quit)
-            self._bquit.grid(...)
-
-    # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
         self._timer = timer
 
-    # lets us turn off the pushbutton's RGB LED
     def setButton(self, button):
         self._button = button
 
-    # pauses the timer
     def pause(self):
-        if (RPi):
+        if RPi:
             self._timer.pause()
 
-    # setup the conclusion GUI (explosion/defusion)
     def conclusion(self, success=False):
-        # destroy/clear widgets that are no longer needed
         self._lscroll["text"] = ""
         self._ltimer.destroy()
         self._lkeypad.destroy()
@@ -111,49 +79,38 @@ class Lcd(Frame):
         self._lbutton.destroy()
         self._ltoggles.destroy()
         self._lstrikes.destroy()
-        if (SHOW_BUTTONS):
+        if SHOW_BUTTONS:
             self._bpause.destroy()
             self._bquit.destroy()
-
-        # reconfigure the GUI
-        # the retry button
-        self._bretry = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Retry", anchor=CENTER, command=self.retry)
+        self._bretry = tk.Button(self, text="Retry", font=("Courier New", 18), bg="red", fg="white", command=self.retry)
         self._bretry.grid(row=1, column=0, pady=40)
-        # the quit button
-        self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
+        self._bquit = tk.Button(self, text="Quit", font=("Courier New", 18), bg="red", fg="white", command=self.quit)
         self._bquit.grid(row=1, column=2, pady=40)
 
-    # re-attempts the bomb (after an explosion or a successful defusion)
     def retry(self):
-        # re-launch the program (and exit this one)
         os.execv(sys.executable, ["python3"] + [sys.argv[0]])
-        exit(0)
 
-    # quits the GUI, resetting some components
     def quit(self):
-        if (RPi):
-            # turn off the 7-segment display
+        if RPi:
             self._timer._running = False
             self._timer._component.blink_rate = 0
             self._timer._component.fill(0)
-            # turn off the pushbutton's LED
             for pin in self._button._rgb:
                 pin.value = True
-        # exit the application
         exit(0)
         
 
-class StartScreen(Frame):
+class StartScreen(tk.Frame):
     def __init__(self, master, start_callback, use_rpi_button=False):
         super().__init__(master, bg="black")
         self.master = master
         self.start_callback = start_callback
-        self.pack(fill=BOTH, expand=True)
+        self.pack(fill=tk.BOTH, expand=True)
 
-        Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
+        tk.Label(self, text="DEFUSE THE BOMB", fg="red", bg="black",
               font=("Courier New", 48, "bold")).pack(pady=60)
 
-        Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
+        tk.Label(self, text="Team: Diego Diaz, Elianna Ayala, Nathan Eshman",
               fg="white", bg="black", font=("Courier New", 18)).pack(pady=10)
 
         if not use_rpi_button:
@@ -185,7 +142,7 @@ class StartScreen(Frame):
         self.start_callback()
 
 
-class VictoryScreen(Toplevel):
+class VictoryScreen(tk.Toplevel):
     def __init__(self, master, on_quit=None):
         super().__init__(master)
         self.configure(bg="black")
@@ -476,7 +433,7 @@ class Toggles(PhaseThread):
             return "DEFUSED"
         return f"{self._value}"
     
-class TriviaFrame(Frame):
+class TriviaFrame(tk.Frame):
     def __init__(self, master, toggles=None, return_callback=None):
         super().__init__(master, bg="black")
         self.pack(fill=BOTH, expand=True)
