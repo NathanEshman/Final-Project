@@ -11,7 +11,7 @@ from threading import Thread
 from time import sleep
 import os
 import sys
-from PIL import Image, ImageTk
+
 
 
 #########
@@ -54,13 +54,7 @@ class Lcd(tk.Frame):
             self._bquit = tk.Button(self, text="Quit", font=("Courier New", 18), bg="red", fg="white", command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
 
-        try:
-            raw_img = Imagetk.open("Ratinpipesmap.jpg")
-            raw_img = raw_img.resize((600, 400), Image.ANTIALIAS)
-            self.map_Imagetk = Image.PhotoImage(raw_img)
-            tk.Label(self, image=self.map_Imagetk, bg="black").grid(row=6, column=0, columnspan=3, pady=20)
-        except Exception as e:
-            tk.Label(self, text=f"Image load error: {e}", fg="red", bg="black").grid(row=6, column=0, columnspan=3, pady=20)
+       
 
     def setTimer(self, timer):
         self._timer = timer

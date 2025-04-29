@@ -194,8 +194,10 @@ def start_main_game():
     global strikes_left, active_phases
     strikes_left = NUM_STRIKES
     active_phases = NUM_PHASES
-    gui.after(1000, bootup)  # Boot up sequence after main screen is visible
-
+    gui.after(1000, bootup)
+    if RPi:
+        timer.start()
+        
 from tkinter import Tk
 
 # Create the main window
