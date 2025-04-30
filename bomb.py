@@ -187,12 +187,15 @@ def turn_off():
         
 def start_main_game():
     global gui
-    gui = Lcd(window)
+    gui = Lcd(window)  # Now only create the main GUI AFTER start screen is gone
     gui.pack()
+    # initialize the bomb strikes and active phases
     global strikes_left, active_phases
     strikes_left = NUM_STRIKES
-    active_phases = NUM_PHASES + 1  # ADD 1 for trivia phase
+    active_phases = NUM_PHASES
     gui.after(1000, bootup)
+    if RPi:
+        timer.start()
         
 from tkinter import Tk
 
