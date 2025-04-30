@@ -13,30 +13,27 @@ from bomb_phases import VictoryScreen
 
 from bomb_phases import StartScreen
 
+from tkinter import Tk
+import tkinter.font as tkFont
+
 
 ###########
 # functions
 ###########
 # generates the bootup sequence on the LCD
 def bootup(n=0):
-    # if we're not animating (or we're at the end of the bootup text)
-    if (not ANIMATE or n == len(boot_text)):
-        # if we're not animating, render the entire text at once (and don't process \x00)
-        if (not ANIMATE):
+    if not ANIMATE or n == len(boot_text):
+        if not ANIMATE:
             gui._lscroll["text"] = boot_text.replace("\x00", "")
-        # configure the remaining GUI widgets
         gui.setup()
-        # setup the phase threads, execute them, and check their statuses
-        if (RPi):
+        if hasattr(gui, "_lscroll"):  # clear the boot scroll label if still there
+            gui._lscroll.destroy()
+        if RPi:
             setup_phases()
             check_phases()
-    # if we're animating
     else:
-        # add the next character (but don't render \x00 since it specifies a longer pause)
-        if (boot_text[n] != "\x00"):
+        if boot_text[n] != "\x00":
             gui._lscroll["text"] += boot_text[n]
-
-        # scroll the next character after a slight delay (\x00 is a longer delay)
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
 
@@ -46,7 +43,7 @@ def check_keypad():
 
 # sets up the phase threads
 def setup_phases():
-    global timer, keypad, wires, button, toggles
+    global timer, keypad, wires, button, toggles, trivia
     
     # setup the timer thread
     timer = Timer(component_7seg, COUNTDOWN)
@@ -62,6 +59,7 @@ def setup_phases():
     gui.setButton(button)
     # setup the toggle switches thread
     toggles = Toggles(component_toggles, toggles_target)
+    trivia = TriviaPhase(component_toggles)
 
     # start the phase threads
     timer.start()
@@ -69,6 +67,8 @@ def setup_phases():
     wires.start()
     button.start()
     toggles.start()
+    trivia.start()
+
 
 # checks the phase threads
 def check_phases():
@@ -138,6 +138,21 @@ def check_phases():
             strike()
             # reset the toggles
             toggles._failed = False
+    # check the trivia
+        if (trivia._running and not hasattr(trivia, 'popup_shown')):
+        trivia.popup_shown = True  # flag to prevent reopening
+        def handle_trivia_result(correct):
+            trivia._defused = correct
+            trivia._failed = not correct
+            trivia._running = False
+            if correct:
+                gui._ltrivia["text"] = "Trivia: DEFUSED"
+            else:
+                strike()
+
+        launch_trivia_popup(on_answer_callback=handle_trivia_result)
+
+    
 
     # note the strikes on the GUI
     gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
@@ -198,12 +213,11 @@ def start_main_game():
     if RPi:
         timer.start()
         
-from tkinter import Tk
 
 # Create the main window
 window = Tk()
 window.title("Defuse the Bomb")
-window.geometry("480x320")  # Adjust if needed
+window.geometry("1920x1080")  # Adjust if needed
 
 # Start the StartScreen
 StartScreen(window, start_callback=start_main_game, use_rpi_button=True)
@@ -211,4 +225,45 @@ StartScreen(window, start_callback=start_main_game, use_rpi_button=True)
 # Run the GUI loop
 window.mainloop()
 
+
+from tkinter import Toplevel, Label, Radiobutton, Button, StringVar, messagebox
+
+def launch_trivia_popup(on_answer_callback=None):
+    def submit_answer():
+        selected = var.get()
+        if selected == "D":
+            messagebox.showinfo("Correct!", "That's right! It was a roller coaster.")
+            if on_answer_callback:
+                on_answer_callback(True)
+        else:
+            messagebox.showerror("Wrong!", f"Oops! The correct answer was D.")
+            if on_answer_callback:
+                on_answer_callback(False)
+        popup.destroy()
+
+    popup = Toplevel()
+    popup.title("Trivia Question")
+    popup.geometry("500x300")
+    popup.configure(bg="black")
+
+    Label(popup, text="What did Phineas and Ferb build?", bg="black", fg="lime", font=("Courier New", 16)).pack(pady=10)
+
+    var = StringVar()
+    options = [
+        ("A) a skyscraper", "A"),
+        ("B) a spaceship", "B"),
+        ("C) a restaurant", "C"),
+        ("D) a roller coaster", "D"),
+    ]
+
+    for text, value in options:
+        Radiobutton(popup, text=text, variable=var, value=value,
+                    font=("Courier New", 14), bg="black", fg="white",
+                    activebackground="gray", selectcolor="black").pack(anchor="w", padx=40)
+
+    Button(popup, text="Submit", command=submit_answer,
+           font=("Courier New", 14), bg="gray", fg="white").pack(pady=20)
+
+    popup.transient()
+    popup.grab_set()
 

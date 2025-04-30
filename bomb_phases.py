@@ -44,9 +44,13 @@ class Lcd(tk.Frame):
         self._lbutton = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Button phase: ")
         self._lbutton.grid(row=4, column=0, columnspan=3, sticky=tk.W)
         self._ltoggles = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Toggles phase: ")
-        self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=tk.W)
+        self._ltoggles.grid(row=5, column=0, columnspan=3, sticky=tk.W)
+        self._ltrivia_q = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 14), text="Trivia: What did Phineas and Ferb build?\nA) a skyscraper  B) a spaceship\nC) a restaurant   D) a roller coaster")
+        self._ltrivia_q.grid(row=6, column=0, columnspan=3, sticky=tk.W)
+        self._ltrivia = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Trivia phase: ")
+        self._ltrivia.grid(row=7, column=0, columnspan=3, sticky=tk.W)
         self._lstrikes = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
-        self._lstrikes.grid(row=5, column=2, sticky=tk.W)
+        self._lstrikes.grid(row=8, column=0, sticky=tk.W)
 
         if SHOW_BUTTONS:
             self._bpause = tk.Button(self, text="Pause", font=("Courier New", 18), bg="red", fg="white", command=self.pause)
@@ -430,53 +434,45 @@ class Toggles(PhaseThread):
             return "DEFUSED"
         return f"{self._value}"
     
-class TriviaFrame(tk.Frame):
-    def __init__(self, master, toggles=None, return_callback=None):
-        super().__init__(master, bg="black")
-        self.pack(fill=BOTH, expand=True)
-        self.toggles = toggles  # list of toggle pins (DigitalInOut)
-        self.return_callback = return_callback
-        self.question = "What is the first thing that Phineas and Ferb build?"
-        self.options = ["a skyscraper", "spaceship", "restaurant", "a roller coaster"]
+class TriviaPhase(PhaseThread):
+    def __init__(self, component, name="Trivia"):
+        super().__init__(name, component)
+        self.options = [
+            "a skyscraper",
+            "spaceship",
+            "restaurant",
+            "a roller coaster"  # correct
+        ]
         self.correct = "a roller coaster"
+        self._target = self.correct
+        self._running = False
 
-        Label(self, text=self.question, fg="white", bg="black",
-              font=("Courier New", 20), wraplength=800).pack(pady=20)
+    def run(self):
+        self._running = True
+        while self._running:
+            # Convert toggle values to integer index
+            try:
+                idx = int("".join(str(int(pin.value)) for pin in self._component), 2)
+                selected = self.options[idx] if 0 <= idx < len(self.options) else None
+            except:
+                selected = None
 
-        for opt in self.options:
-            Button(self, text=opt, font=("Courier New", 16),
-                   bg="gray20", fg="white", width=30,
-                   command=lambda o=opt: self.check_answer(o)).pack(pady=5)
+            if selected == self.correct:
+                self._value = selected
+                self._defused = True
+                self._running = False
+            elif selected and selected != self.correct:
+                self._value = selected
+                self._failed = True
+                self._running = False
 
-        self.result = Label(self, text="", fg="white", bg="black", font=("Courier New", 16))
-        self.result.pack(pady=20)
+            sleep(0.1)
 
-        # NEW toggle status display
-        self.toggle_status = Label(self, text="Toggles: ----", fg="yellow", bg="black", font=("Courier New", 16))
-        self.toggle_status.pack(pady=10)
-
-        Button(self, text="Return to Main", font=("Courier New", 16),
-               bg="red", fg="white", command=self.return_main).pack(pady=20)
-
-        self.poll_toggles()  # Start polling
-
-    def check_answer(self, selected):
-        if selected == self.correct:
-            self.result.config(text="Correct! 🎉", fg="lime")
-        else:
-            self.result.config(text="Wrong! ❌", fg="red")
-
-    def poll_toggles(self):
-        if self.toggles:
-            state = "".join(str(int(pin.value)) for pin in self.toggles)
-            self.toggle_status.config(text=f"Toggles: {state}")
-        self.after(100, self.poll_toggles)
-
-    def return_main(self):
-        if self.return_callback:
-            self.return_callback()
-            
-    def check_trivia():
-        return trivia_frame.result["text"] == "Correct! 🎉"
+    def __str__(self):
+        if self._defused:
+            return "DEFUSED"
+        elif self._failed:
+            return f"Wrong! {self._value}"
+        return "Waiting for Answer"
 
     
