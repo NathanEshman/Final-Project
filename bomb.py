@@ -34,9 +34,28 @@ def bootup(n=0):
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
 
-def check_keypad():
-    return keypad._value == keypad._target
+def check_all_phases():
+    if keypad._running and keypad._value == keypad._target:
+        return True
 
+    unplugged_colors = {color for color, state in zip(wires.wire_colors, wires.wire_states) if not state}
+    plugged_colors = {color for color, state in zip(wires.wire_colors, wires.wire_states) if state}
+    if unplugged_colors == {"Red", "Blue", "Yellow"} and {"Red", "Blue", "Yellow"}.isdisjoint(plugged_colors):
+        return True
+
+    bits = [str(int(pin.value)) for pin in toggles._component[1:4:2]]
+    toggle_val = "".join(bits)
+    if toggle_val == toggles._target:
+        return True
+
+    if hasattr(globals(), "trivia") and trivia._running and trivia._value == trivia._target:
+        return True
+
+    return False
+
+from bomb_phases import TriviaPhase  # import phase class
+
+# Add trivia to setup phases
 
 # sets up the phase threads
 def setup_phases():
@@ -135,6 +154,23 @@ def check_phases():
             strike()
             # reset the toggles
             toggles._failed = False
+    # check the trivia phase
+if (trivia._running):
+    try:
+        idx = int("".join(str(int(pin.value)) for pin in component_toggles), 2)
+        selected = trivia.options[idx]
+    except:
+        selected = "Invalid"
+    gui._ltrivia["text"] = f"Trivia: {selected}"
+    if trivia._defused:
+        gui._ltrivia["text"] = "Trivia: Correct ✅"
+        trivia._running = False
+        active_phases -= 1
+    elif trivia._failed:
+        gui._ltrivia["text"] = "Trivia: Wrong ❌"
+        trivia._running = False
+        active_phases -= 1
+
 
     # note the strikes on the GUI
     gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
