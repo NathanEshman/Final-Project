@@ -58,6 +58,7 @@ def setup_phases():
     gui.setButton(button)
     # setup the toggle switches thread
     toggles = Toggles(component_toggles, toggles_target)
+    trivia = TriviaPhase(component_toggles)
 
     # start the phase threads
     timer.start()
@@ -65,6 +66,8 @@ def setup_phases():
     wires.start()
     button.start()
     toggles.start()
+    trivia.start()
+
 
 # checks the phase threads
 def check_phases():
@@ -184,15 +187,12 @@ def turn_off():
         
 def start_main_game():
     global gui
-    gui = Lcd(window)  # Now only create the main GUI AFTER start screen is gone
+    gui = Lcd(window)
     gui.pack()
-    # initialize the bomb strikes and active phases
     global strikes_left, active_phases
     strikes_left = NUM_STRIKES
-    active_phases = NUM_PHASES
+    active_phases = NUM_PHASES + 1  # ADD 1 for trivia phase
     gui.after(1000, bootup)
-    if RPi:
-        timer.start()
         
 from tkinter import Tk
 
