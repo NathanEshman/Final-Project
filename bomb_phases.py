@@ -233,15 +233,18 @@ class Wires(PhaseThread):
     def run(self):
         self._running = True
         while self._running:
-            # Read GPIO wire states (0=False, 1=True)
-            self._value = "".join([str(int(pin.value)) for pin in self._component])
-            value_bin = self._value
-            if len(value_bin) == len(self._component):
-                value_dec = int(value_bin, 2)
-                if value_dec == self._target:
-                    self._defused = True
-                elif value_dec != self._target and value_dec != 0:
-                    self._failed = True
+            try:
+                raw_vals = [pin.value for pin in self._component]
+                print(f"[DEBUG] Wires raw input: {raw_vals}")
+                self._value = "".join([str(int(v)) for v in raw_vals])
+                if len(self._value) == len(self._component):
+                    value_dec = int(self._value, 2)
+                    if value_dec == self._target:
+                        self._defused = True
+                    elif value_dec != self._target and value_dec != 0:
+                        self._failed = True
+            except Exception as e:
+                print(f"[ERROR] Wires phase: {e}")
             sleep(0.1)
 
     def __str__(self):
@@ -311,14 +314,18 @@ class Toggles(PhaseThread):
     def run(self):
         self._running = True
         while self._running:
-            self._value = "".join([str(int(pin.value)) for pin in self._component])
-            value_bin = self._value
-            if len(value_bin) == len(self._component):
-                value_dec = int(value_bin, 2)
-                if value_dec == self._target:
-                    self._defused = True
-                elif value_dec != self._target and value_dec != 0:
-                    self._failed = True
+            try:
+                raw_vals = [pin.value for pin in self._component]
+                print(f"[DEBUG] Toggles raw input: {raw_vals}")
+                self._value = "".join([str(int(v)) for v in raw_vals])
+                if len(self._value) == len(self._component):
+                    value_dec = int(self._value, 2)
+                    if value_dec == self._target:
+                        self._defused = True
+                    elif value_dec != self._target and value_dec != 0:
+                        self._failed = True
+            except Exception as e:
+                print(f"[ERROR] Toggles phase: {e}")
             sleep(0.1)
 
     def __str__(self):
