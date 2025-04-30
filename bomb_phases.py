@@ -367,25 +367,21 @@ class Button(PhaseThread):
     def run(self):
         self._running = True
         while self._running:
-            # Check current button state
             self._value = self._component.value
 
-            if self._value:  # Button is currently pressed
+            if self._value:
                 self._pressed = True
-
-            elif self._pressed:  # Button was pressed and now released
-                # Evaluate user input via callback
+            elif self._pressed:
                 correct = self._check_callback()
 
                 if correct:
                     self._defused = True
-                    self._set_led("G")  # Green = correct
+                    self._set_led("G")
                 else:
                     self._failed = True
-                    self._set_led("R")  # Red = wrong
-
+                    print("Button marked as failed")  # Debug line
+                    self._set_led("R")
                 self._pressed = False
-
             sleep(0.1)
 
     def _set_led(self, color):
