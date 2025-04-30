@@ -42,7 +42,7 @@ def check_keypad():
 
 # sets up the phase threads
 def setup_phases():
-    global timer, keypad, wires, button, toggles
+    global timer, keypad, wires, button, toggles, trivia
     
     # setup the timer thread
     timer = Timer(component_7seg, COUNTDOWN)
