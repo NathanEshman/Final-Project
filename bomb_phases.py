@@ -85,9 +85,11 @@ class Lcd(tk.Frame):
         self._bretry.grid(row=1, column=0, pady=40)
         self._bquit = tk.Button(self, text="Quit", font=("Courier New", 18), bg="red", fg="white", command=self.quit)
         self._bquit.grid(row=1, column=2, pady=40)
+        tk.Label(self, text="Game Over!", font=("Courier New", 36), bg="black", fg="red").grid(row=0, column=0, columnspan=3, pady=20)
+
 
     def retry(self):
-        os.execv(sys.executable, ["python3"] + [sys.argv[0]])
+        os.execv(sys.executable, ["python3"] + sys.argv)
 
     def quit(self):
         if RPi:
