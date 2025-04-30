@@ -114,17 +114,14 @@ def check_phases():
             wires._failed = False
     # check the button
     if (button._running):
-        # update the GUI
-        gui._lbutton["text"] = f"Button: {button}"
-        # the phase is defused -> stop the thread
-        if (button._defused):
-            button._running = False
-            active_phases -= 1
-        # the phase has failed -> strike
-        elif (button._failed):
-            strike()
-            # reset the button
-            button._failed = False
+    gui._lbutton["text"] = f"Button: {button}"
+    if (button._defused):
+        button._running = False
+        active_phases -= 1
+    elif (button._failed):
+        print("Button press incorrect — triggering strike")  # Debug line
+        strike()
+        button._failed = False
     # check the toggles
     if (toggles._running):
         # update the GUI
@@ -140,7 +137,7 @@ def check_phases():
             toggles._failed = False
     # check the trivia
         if (trivia._running and not hasattr(trivia, 'popup_shown')):
-        trivia.popup_shown = True  # flag to prevent reopening
+            trivia.popup_shown = True  # flag to prevent reopening
         def handle_trivia_result(correct):
             trivia._defused = correct
             trivia._failed = not correct
@@ -177,13 +174,14 @@ def check_phases():
 
     # check the phases again after a slight delay
     gui.after(100, check_phases)
+    
+    
 
 # handles a strike
 def strike():
     global strikes_left
-    
-    # note the strike
     strikes_left -= 1
+    print(f"STRIKE! Strikes left: {strikes_left}")  # Debug line
 
 # turns off the bomb
 def turn_off():
@@ -213,11 +211,7 @@ def start_main_game():
     if RPi:
         timer.start()
         
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 8725eff2a3cc78ddba7aff20624d6d71d78736af
 
 # Create the main window
 window = Tk()
