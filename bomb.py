@@ -114,7 +114,7 @@ def check_phases():
             wires._failed = False
     # check the button
     if (button._running):
-    gui._lbutton["text"] = f"Button: {button}"
+        gui._lbutton["text"] = f"Button: {button}"
     if (button._defused):
         button._running = False
         active_phases -= 1
