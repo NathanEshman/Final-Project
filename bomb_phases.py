@@ -230,18 +230,27 @@ class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
 
-    # runs the thread
     def run(self):
-        # TODO
-        pass
+        self._running = True
+        while self._running:
+            # Read GPIO wire states (0=False, 1=True)
+            self._value = "".join([str(int(pin.value)) for pin in self._component])
+            value_bin = self._value
+            if len(value_bin) == len(self._component):
+                value_dec = int(value_bin, 2)
+                if value_dec == self._target:
+                    self._defused = True
+                elif value_dec != self._target and value_dec != 0:
+                    self._failed = True
+            sleep(0.1)
 
-    # returns the jumper wires state as a string
     def __str__(self):
-        if (self._defused):
+        if self._defused:
             return "DEFUSED"
+        elif self._value:
+            return f"{self._value}/{int(self._value, 2)}"
         else:
-            # TODO
-            pass
+            return ""
 
 # the pushbutton phase
 class Button(PhaseThread):
@@ -299,15 +308,23 @@ class Toggles(PhaseThread):
     def __init__(self, component, target, name="Toggles"):
         super().__init__(name, component, target)
 
-    # runs the thread
     def run(self):
-        # TODO
-        pass
+        self._running = True
+        while self._running:
+            self._value = "".join([str(int(pin.value)) for pin in self._component])
+            value_bin = self._value
+            if len(value_bin) == len(self._component):
+                value_dec = int(value_bin, 2)
+                if value_dec == self._target:
+                    self._defused = True
+                elif value_dec != self._target and value_dec != 0:
+                    self._failed = True
+            sleep(0.1)
 
-    # returns the toggle switches state as a string
     def __str__(self):
-        if (self._defused):
+        if self._defused:
             return "DEFUSED"
+        elif self._value:
+            return f"{self._value}/{int(self._value, 2)}"
         else:
-            # TODO
-            pass
+            return ""
