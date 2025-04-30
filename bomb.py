@@ -13,6 +13,9 @@ from bomb_phases import VictoryScreen
 
 from bomb_phases import StartScreen
 
+from tkinter import Tk
+import tkinter.font as tkFont
+
 
 ###########
 # functions
@@ -205,7 +208,11 @@ def start_main_game():
     if RPi:
         timer.start()
         
-from tkinter import Tk
+# ---------- WINDOW CONFIG ----------
+# Set font scaling for 1080p
+default_font = tkFont.nametofont("TkDefaultFont")
+default_font.configure(size=24)
+
 
 # Create the main window
 window = Tk()
