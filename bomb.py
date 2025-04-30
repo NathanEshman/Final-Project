@@ -23,6 +23,8 @@ def bootup(n=0):
         if not ANIMATE:
             gui._lscroll["text"] = boot_text.replace("\x00", "")
         gui.setup()
+        if hasattr(gui, "_lscroll"):  # clear the boot scroll label if still there
+            gui._lscroll.destroy()
         if RPi:
             setup_phases()
             check_phases()
@@ -30,10 +32,6 @@ def bootup(n=0):
         if boot_text[n] != "\x00":
             gui._lscroll["text"] += boot_text[n]
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
-        # 🟢 Ensure phases are monitored even during animation
-        if n == 0 and RPi:
-            setup_phases()
-            gui.after(100, check_phases)
 
 
 def check_keypad():
