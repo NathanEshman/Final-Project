@@ -139,14 +139,19 @@ def check_phases():
             # reset the toggles
             toggles._failed = False
     # check the trivia
-    if (trivia._running):
-        gui._ltrivia["text"] = f"Trivia: {trivia}"
-        if (trivia._defused):
+        if (trivia._running and not hasattr(trivia, 'popup_shown')):
+        trivia.popup_shown = True  # flag to prevent reopening
+        def handle_trivia_result(correct):
+            trivia._defused = correct
+            trivia._failed = not correct
             trivia._running = False
-            active_phases -= 1
-        elif (trivia._failed):
-            strike()
-            trivia._failed = False
+            if correct:
+                gui._ltrivia["text"] = "Trivia: DEFUSED"
+            else:
+                strike()
+
+        launch_trivia_popup(on_answer_callback=handle_trivia_result)
+
     
 
     # note the strikes on the GUI
@@ -208,8 +213,11 @@ def start_main_game():
     if RPi:
         timer.start()
         
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 8725eff2a3cc78ddba7aff20624d6d71d78736af
 
 # Create the main window
 window = Tk()
@@ -222,4 +230,45 @@ StartScreen(window, start_callback=start_main_game, use_rpi_button=True)
 # Run the GUI loop
 window.mainloop()
 
+
+from tkinter import Toplevel, Label, Radiobutton, Button, StringVar, messagebox
+
+def launch_trivia_popup(on_answer_callback=None):
+    def submit_answer():
+        selected = var.get()
+        if selected == "D":
+            messagebox.showinfo("Correct!", "That's right! It was a roller coaster.")
+            if on_answer_callback:
+                on_answer_callback(True)
+        else:
+            messagebox.showerror("Wrong!", f"Oops! The correct answer was D.")
+            if on_answer_callback:
+                on_answer_callback(False)
+        popup.destroy()
+
+    popup = Toplevel()
+    popup.title("Trivia Question")
+    popup.geometry("500x300")
+    popup.configure(bg="black")
+
+    Label(popup, text="What did Phineas and Ferb build?", bg="black", fg="lime", font=("Courier New", 16)).pack(pady=10)
+
+    var = StringVar()
+    options = [
+        ("A) a skyscraper", "A"),
+        ("B) a spaceship", "B"),
+        ("C) a restaurant", "C"),
+        ("D) a roller coaster", "D"),
+    ]
+
+    for text, value in options:
+        Radiobutton(popup, text=text, variable=var, value=value,
+                    font=("Courier New", 14), bg="black", fg="white",
+                    activebackground="gray", selectcolor="black").pack(anchor="w", padx=40)
+
+    Button(popup, text="Submit", command=submit_answer,
+           font=("Courier New", 14), bg="gray", fg="white").pack(pady=20)
+
+    popup.transient()
+    popup.grab_set()
 
