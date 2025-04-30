@@ -44,9 +44,13 @@ class Lcd(tk.Frame):
         self._lbutton = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Button phase: ")
         self._lbutton.grid(row=4, column=0, columnspan=3, sticky=tk.W)
         self._ltoggles = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Toggles phase: ")
-        self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=tk.W)
+        self._ltoggles.grid(row=5, column=0, columnspan=3, sticky=tk.W)
+        self._ltrivia_q = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 14), text="Trivia: What did Phineas and Ferb build?\nA) a skyscraper  B) a spaceship\nC) a restaurant   D) a roller coaster")
+        self._ltrivia_q.grid(row=6, column=0, columnspan=3, sticky=tk.W)
+        self._ltrivia = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Trivia phase: ")
+        self._ltrivia.grid(row=7, column=0, columnspan=3, sticky=tk.W)
         self._lstrikes = tk.Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
-        self._lstrikes.grid(row=5, column=2, sticky=tk.W)
+        self._lstrikes.grid(row=8, column=0, sticky=tk.W)
 
         if SHOW_BUTTONS:
             self._bpause = tk.Button(self, text="Pause", font=("Courier New", 18), bg="red", fg="white", command=self.pause)

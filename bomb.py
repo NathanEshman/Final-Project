@@ -135,6 +135,15 @@ def check_phases():
             strike()
             # reset the toggles
             toggles._failed = False
+    # check the trivia
+    if (trivia._running):
+        gui._ltrivia["text"] = f"Trivia: {trivia}"
+        if (trivia._defused):
+            trivia._running = False
+            active_phases -= 1
+        elif (trivia._failed):
+            strike()
+            trivia._failed = False
     
 
     # note the strikes on the GUI
