@@ -210,7 +210,7 @@ from tkinter import Tk
 # Create the main window
 window = Tk()
 window.title("Defuse the Bomb")
-window.geometry("480x320")  # Adjust if needed
+window.geometry("1920x1080")  # Adjust if needed
 
 # Start the StartScreen
 StartScreen(window, start_callback=start_main_game, use_rpi_button=True)
