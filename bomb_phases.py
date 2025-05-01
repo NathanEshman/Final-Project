@@ -253,6 +253,7 @@ class Wires(PhaseThread):
         return f"{self._value}/{int(self._value, 2)}"
 
 
+
 # the pushbutton phase
 class Button(PhaseThread):
     def __init__(self, component_state, component_rgb, target, color, timer, name="Button"):
