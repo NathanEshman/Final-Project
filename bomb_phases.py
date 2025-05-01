@@ -368,6 +368,7 @@ class Toggles(PhaseThread):
 
 class RiddleToggles(Toggles):
     def run(self):
+        global gui  # ✅ Required so .destroy() and .showCorrect() work
         self._running = True
         while self._running:
             try:

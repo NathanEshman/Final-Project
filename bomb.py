@@ -27,28 +27,29 @@ def bootup(n=0):
 
 # sets up the phase threads
 def setup_phases():
-    global timer, keypad, wires, button, toggles
+    global timer, keypad, wires, button, toggles, gui  # ✅ Add gui here
 
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
+
     keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
     gui.setButton(button)
 
-global toggles
-if RIDDLE_MODE:
-    toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
-    print("[DEBUG] RiddleToggles phase initialized")
-else:
-    toggles = Toggles(component_toggles, toggles_target)
+    if RIDDLE_MODE:
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
+        print("[DEBUG] RiddleToggles phase initialized")
+    else:
+        toggles = Toggles(component_toggles, toggles_target)
 
-toggles.start()
-timer.start()
-keypad.start()
-wires.start()
-button.start()
-toggles.start()
+    # ✅ Start threads AFTER everything is assigned
+    timer.start()
+    keypad.start()
+    wires.start()
+    button.start()
+    toggles.start()
+
 
 # checks the phase threads
 def check_phases():
