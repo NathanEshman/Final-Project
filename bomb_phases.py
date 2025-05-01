@@ -370,6 +370,8 @@ class RiddleToggles(Toggles):
     def run(self):
         global gui  # ✅ Required so .destroy() and .showCorrect() work
         self._running = True
+        self._grace_end = time.time() + 2
+        print("[DEBUG] RiddleToggles thread started")
         while self._running:
             try:
                 value_bin = "".join([str(int(pin.value)) for pin in self._component])
@@ -383,4 +385,11 @@ class RiddleToggles(Toggles):
             except Exception as e:
                 print(f"[ERROR] RiddleToggles phase: {e}")
             sleep(0.1)
+            
+    def __str__(self):
+    if self._defused:
+        return "DEFUSED"
+    if self._value is None:
+        return "WAITING"
+    return f"{self._value}/{int(self._value, 2)}"
 
