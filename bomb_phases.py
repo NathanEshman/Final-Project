@@ -236,6 +236,7 @@ class Keypad(PhaseThread):
 class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
+        self._grace_end = time.time() + 2  # 2s grace period
 
     def run(self):
         self._running = True
@@ -247,8 +248,7 @@ class Wires(PhaseThread):
                 if value_dec == self._target:
                     self._defused = True
                     self._running = False
-                # Only trigger a strike if value is non-zero (user interacted) and incorrect
-                elif value_dec != 0 and value_dec != self._target:
+                elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
                     self._failed = True
             except Exception as e:
                 print(f"[ERROR] {self.__class__.__name__} phase: {e}")
@@ -319,6 +319,7 @@ class Button(PhaseThread):
 class Toggles(PhaseThread):
     def __init__(self, component, target, name="Toggles"):
         super().__init__(name, component, target)
+        self._grace_end = time.time() + 2
 
     def run(self):
         self._running = True
@@ -330,13 +331,11 @@ class Toggles(PhaseThread):
                 if value_dec == self._target:
                     self._defused = True
                     self._running = False
-                # Only trigger a strike if value is non-zero (user interacted) and incorrect
-                elif value_dec != 0 and value_dec != self._target:
+                elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
                     self._failed = True
             except Exception as e:
                 print(f"[ERROR] {self.__class__.__name__} phase: {e}")
             sleep(0.1)
-
 
     def __str__(self):
         if self._defused:
