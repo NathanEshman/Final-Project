@@ -19,11 +19,9 @@ import os
 # generates the bootup sequence on the LCD
 def bootup(n=0):
     if not ANIMATE or n == len(boot_text):
-        if not ANIMATE:
-            gui._lscroll["text"] = boot_text.replace("\x00", "")
+        gui._lscroll["text"] = boot_text.replace("\x00", "")
         gui.setup()
-        if hasattr(gui, "_lscroll"):
-            gui._lscroll.destroy()
+        gui._lscroll.destroy()
         if RPi:
             setup_phases()
             check_phases()
