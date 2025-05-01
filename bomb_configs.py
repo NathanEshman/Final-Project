@@ -13,6 +13,9 @@ COUNTDOWN = 300      # the initial bomb countdown value (seconds)
 NUM_STRIKES = 5      # the total strikes allowed before the bomb "explodes"
 NUM_PHASES = 4       # the total number of initial active bomb phases
 FIRST_GAME_IS_RIDDLE = True  # Add this line
+RIDDLE_MODE = True
+RIDDLE_TOGGLE_ANSWER = 2  # binary 0010, index 2 (correct answer)
+
 
 if FIRST_GAME_IS_RIDDLE:
     toggles_target = 2  # binary 0010, toggle index 2

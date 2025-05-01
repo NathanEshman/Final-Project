@@ -92,6 +92,13 @@ class Lcd(Frame):
         if FIRST_GAME_IS_RIDDLE:
             self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14), text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine 2-Roller Coaster 3-Robot Dog 4-Spaceship")
             self._lriddle.grid(row=6, column=0, columnspan=3, sticky=W)
+            
+        
+        if RIDDLE_MODE:
+            self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14),
+                          text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
+            self._lriddle.grid(row=6, column=0, columnspan=3, sticky=W)
+
 
 
     # lets us pause/unpause the timer (7-segment display)
@@ -367,3 +374,21 @@ class Toggles(PhaseThread):
         if self._value is None:
             return "WAITING"
         return f"{self._value}/{int(self._value, 2)}"
+
+class RiddleToggles(Toggles):
+    def run(self):
+        self._running = True
+        while self._running:
+            try:
+                value_bin = "".join([str(int(pin.value)) for pin in self._component])
+                value_dec = int(value_bin, 2)
+                self._value = value_bin
+                if value_dec == self._target:
+                    self._running = False
+                    if hasattr(gui, "_lriddle"):
+                        gui._lriddle.destroy()
+                    setup_actual_phases()
+            except Exception as e:
+                print(f"[ERROR] RiddleToggles phase: {e}")
+            sleep(0.1)
+
