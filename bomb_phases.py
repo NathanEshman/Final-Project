@@ -29,6 +29,25 @@ class Lcd(Frame):
         self._button = None
         # setup the initial "boot" GUI
         self.setupBoot()
+    
+    def showRiddle(self):
+        # clear previous boot widgets
+        self._lscroll.destroy()
+
+        # display the riddle
+        self._lriddle_q = Label(self, bg="black", fg="yellow", font=("Courier New", 18), 
+            text="RIDDLE: What did Phineas & Ferb build first?", justify=LEFT)
+        self._lriddle_q.grid(row=0, column=0, columnspan=3, sticky=W, padx=10, pady=10)
+
+        self._lriddle_opts = Label(self, bg="black", fg="yellow", font=("Courier New", 16), 
+            text="1) Time Machine\n2) Roller Coaster\n3) Robot Dog\n4) Spaceship", justify=LEFT)
+        self._lriddle_opts.grid(row=1, column=0, columnspan=3, sticky=W, padx=10)
+
+        # Continue button
+        self._bcontinue = tkinter.Button(self, bg="green", fg="white", font=("Courier New", 18), 
+            text="Continue", anchor=CENTER, command=self.setup)
+        self._bcontinue.grid(row=2, column=1, pady=20)
+
 
     # sets up the LCD "boot" GUI
     def setupBoot(self):
