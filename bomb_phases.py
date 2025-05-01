@@ -233,15 +233,14 @@ class Wires(PhaseThread):
         self._running = True
         while self._running:
             try:
-                raw_vals = [pin.value for pin in self._component]
-                print(f"[DEBUG] Wires raw input: {raw_vals}")
-                self._value = "".join([str(int(v)) for v in raw_vals])
-                if len(self._value) == len(self._component):
-                    value_dec = int(self._value, 2)
-                    if value_dec == self._target:
-                        self._defused = True
-                    elif value_dec != self._target and value_dec != 0:
-                        self._failed = True
+                value_bin = "".join([str(int(pin.value)) for pin in self._component])
+                self._value = value_bin
+                value_dec = int(value_bin, 2)
+                if value_dec == self._target:
+                    self._defused = True
+                    self._running = False
+                elif value_dec != 0 and value_dec != self._target:
+                    self._failed = True
             except Exception as e:
                 print(f"[ERROR] Wires phase: {e}")
             sleep(0.1)
@@ -249,10 +248,10 @@ class Wires(PhaseThread):
     def __str__(self):
         if self._defused:
             return "DEFUSED"
-        elif self._value:
-            return f"{self._value}/{int(self._value, 2)}"
-        else:
-            return ""
+        if self._value is None:
+            return "WAITING"
+        return f"{self._value}/{int(self._value, 2)}"
+
 
 # the pushbutton phase
 class Button(PhaseThread):
@@ -314,15 +313,14 @@ class Toggles(PhaseThread):
         self._running = True
         while self._running:
             try:
-                raw_vals = [pin.value for pin in self._component]
-                print(f"[DEBUG] Toggles raw input: {raw_vals}")
-                self._value = "".join([str(int(v)) for v in raw_vals])
-                if len(self._value) == len(self._component):
-                    value_dec = int(self._value, 2)
-                    if value_dec == self._target:
-                        self._defused = True
-                    elif value_dec != self._target and value_dec != 0:
-                        self._failed = True
+                value_bin = "".join([str(int(pin.value)) for pin in self._component])
+                self._value = value_bin
+                value_dec = int(value_bin, 2)
+                if value_dec == self._target:
+                    self._defused = True
+                    self._running = False
+                elif value_dec != 0 and value_dec != self._target:
+                    self._failed = True
             except Exception as e:
                 print(f"[ERROR] Toggles phase: {e}")
             sleep(0.1)
@@ -330,7 +328,6 @@ class Toggles(PhaseThread):
     def __str__(self):
         if self._defused:
             return "DEFUSED"
-        elif self._value:
-            return f"{self._value}/{int(self._value, 2)}"
-        else:
-            return ""
+        if self._value is None:
+            return "WAITING"
+        return f"{self._value}/{int(self._value, 2)}"
