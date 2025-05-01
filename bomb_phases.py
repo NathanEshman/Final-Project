@@ -86,10 +86,7 @@ class Lcd(Frame):
             
         
         if RIDDLE_MODE:
-            self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14),
-                          text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
-            self._lriddle.grid(row=6, column=0, columnspan=3, sticky=W)
-
+            self.showRiddle()
 
 
     # lets us pause/unpause the timer (7-segment display)
