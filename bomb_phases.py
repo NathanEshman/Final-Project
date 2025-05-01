@@ -390,3 +390,11 @@ class RiddleToggles(Toggles):
         except Exception as e:
             print(f"[ERROR] RiddleToggles phase: {e}")
         sleep(0.1)
+        
+   def __str__(self):
+    if self._defused:
+        return "DEFUSED"
+    try:
+        return f"{self._value}/{int(self._value, 2)}"
+    except:
+        return "WAITING"
