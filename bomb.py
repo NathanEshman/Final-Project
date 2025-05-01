@@ -154,7 +154,7 @@ Label(
 ).pack(pady=40)
 
 try:
-    img = PhotoImage(file="Start_Mouse.png")
+    img = PhotoImage(file="Start_Mouse.jpg")
     Label(start_screen, image=img, bg="black").pack()
 except Exception as e:
     Label(start_screen, text="[Image Not Found]", fg="white", bg="black").pack()
