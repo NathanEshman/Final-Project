@@ -138,6 +138,10 @@ def start_main_game():
     strikes_left = NUM_STRIKES
     active_phases = NUM_PHASES
     gui.after(1000, bootup)
+    if RPi:
+        setup_phases()
+        check_phases()
+
 
 window = Tk()
 window.title("Defuse the Bomb")
