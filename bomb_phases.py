@@ -30,48 +30,7 @@ class Lcd(Frame):
         # setup the initial "boot" GUI
         self.setupBoot()
     
-    def showRiddle(self):
-        # clear previous boot widgets
-        self._lscroll.destroy()
-
-        # display the riddle question
-        self._lriddle_q = Label(self, bg="black", fg="yellow", font=("Courier New", 18), 
-            text="RIDDLE: What did Phineas & Ferb build first?", justify=LEFT)
-        self._lriddle_q.grid(row=0, column=0, columnspan=3, sticky=W, padx=10, pady=10)
-
-        # radio button choices
-        self._riddle_answer = IntVar()
-        self._riddle_answer.set(-1)
-
-        options = [
-            "1) Time Machine",
-            "2) Roller Coaster",
-            "3) Robot Dog",
-            "4) Spaceship"
-        ]
-        for i, opt in enumerate(options):
-            rb = Radiobutton(self, text=opt, variable=self._riddle_answer, value=i+1,
-                             font=("Courier New", 16), bg="black", fg="yellow",
-                             selectcolor="black", activebackground="black", activeforeground="white")
-            rb.grid(row=i+1, column=0, columnspan=3, sticky=W, padx=20)
-
-        # feedback label
-        self._lriddle_feedback = Label(self, text="", font=("Courier New", 16), fg="red", bg="black")
-        self._lriddle_feedback.grid(row=6, column=0, columnspan=3)
-
-        # Continue button
-        self._bcontinue = tkinter.Button(self, bg="green", fg="white", font=("Courier New", 18), 
-            text="Submit", anchor=CENTER, command=self.checkRiddleAnswer)
-        self._bcontinue.grid(row=7, column=1, pady=20)
-
-# Add this method to check the selected answer:
-def checkRiddleAnswer(self):
-    # correct answer is 2 (Roller Coaster)
-    if self._riddle_answer.get() == 2:
-        self._lriddle_feedback.config(text="Correct! Starting game...", fg="green")
-        self.after(1000, self.setup)
-    else:
-        self._lriddle_feedback.config(text="Incorrect. Try again.", fg="red")
+    
 
     # sets up the LCD "boot" GUI
     def setupBoot(self):

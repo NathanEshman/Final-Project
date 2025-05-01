@@ -9,56 +9,56 @@ from bomb_configs import *
 # import the phases
 from bomb_phases import *
 
-from bomb_phases import RiddleToggles  # make sure the class is defined there
-
-
 ###########
 # functions
 ###########
 # generates the bootup sequence on the LCD
 def bootup(n=0):
-    if not ANIMATE or n == len(boot_text):
-        if not ANIMATE:
+    # if we're not animating (or we're at the end of the bootup text)
+    if (not ANIMATE or n == len(boot_text)):
+        # if we're not animating, render the entire text at once (and don't process \x00)
+        if (not ANIMATE):
             gui._lscroll["text"] = boot_text.replace("\x00", "")
-        # IF riddle is enabled, show riddle screen instead of setup
-        if FIRST_GAME_IS_RIDDLE:
-            gui.showRiddle()
-        else:
-            gui.setup()
-        if RPi:
+        # configure the remaining GUI widgets
+        gui.setup()
+        # setup the phase threads, execute them, and check their statuses
+        if (RPi):
             setup_phases()
             check_phases()
+    # if we're animating
     else:
-        if boot_text[n] != "\x00":
+        # add the next character (but don't render \x00 since it specifies a longer pause)
+        if (boot_text[n] != "\x00"):
             gui._lscroll["text"] += boot_text[n]
+
+        # scroll the next character after a slight delay (\x00 is a longer delay)
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
 # sets up the phase threads
 def setup_phases():
-    global toggles
-    if RIDDLE_MODE:
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
-        toggles.start()
-    else:
-        setup_actual_phases()
-
-def setup_actual_phases():
     global timer, keypad, wires, button, toggles
-
+    
+    # setup the timer thread
     timer = Timer(component_7seg, COUNTDOWN)
+    # bind the 7-segment display to the LCD GUI so that it can be paused/unpaused from the GUI
     gui.setTimer(timer)
+    # setup the keypad thread
     keypad = Keypad(component_keypad, keypad_target)
+    # setup the jumper wires thread
     wires = Wires(component_wires, wires_target)
+    # setup the pushbutton thread
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
+    # bind the pushbutton to the LCD GUI so that its LED can be turned off when we quit
     gui.setButton(button)
+    # setup the toggle switches thread
     toggles = Toggles(component_toggles, toggles_target)
 
+    # start the phase threads
     timer.start()
     keypad.start()
     wires.start()
     button.start()
     toggles.start()
-
 
 # checks the phase threads
 def check_phases():
