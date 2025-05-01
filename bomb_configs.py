@@ -191,13 +191,16 @@ def genKeypadCombination():
 #  wires_target: the wires phase defuse value
 serial, toggles_target, wires_target = genSerial()
 
-# generate the combination for the keypad phase
-#  keyword: the plaintext keyword for the lookup table
-#  cipher_keyword: the encrypted keyword for the lookup table
-#  rot: the key to decrypt the keyword
-#  keypad_target: the keypad phase defuse value (combination)
-#  passphrase: the target plaintext passphrase
-keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
+# MATH MODE override for keypad phase
+MATH_MODE = True
+
+if MATH_MODE:
+    math_question = "√10 + 2"
+    keypad_target = "5"  # rounded from ≈5.16
+    passphrase = math_question
+else:
+    keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
+
 
 # generate the color of the pushbutton (which determines how to defuse the phase)
 button_color = choice(["R", "G", "B"])
