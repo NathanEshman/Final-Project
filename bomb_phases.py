@@ -68,6 +68,12 @@ class Lcd(Frame):
             # the quit button
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
+            
+        # Add below the toggles label line
+        if FIRST_GAME_IS_RIDDLE:
+            self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14), text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine 2-Roller Coaster 3-Robot Dog 4-Spaceship")
+            self._lriddle.grid(row=6, column=0, columnspan=3, sticky=W)
+
 
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
