@@ -8,6 +8,23 @@
 from bomb_configs import *
 # import the phases
 from bomb_phases import *
+import board
+from digitalio import DigitalInOut, Direction, Pull
+import time
+
+# TEMP: Toggle pin reader debug
+pins = [board.D12, board.D16, board.D20, board.D21]
+toggles = [DigitalInOut(p) for p in pins]
+for t in toggles:
+    t.direction = Direction.INPUT
+    t.pull = Pull.DOWN
+
+print("Reading toggles. Press Ctrl+C to stop.")
+while True:
+    values = "".join(str(int(t.value)) for t in toggles)
+    print("Toggles raw:", values)
+    time.sleep(0.5)
+
 
 ###########
 # functions
