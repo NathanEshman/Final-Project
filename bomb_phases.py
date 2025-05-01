@@ -29,6 +29,14 @@ class Lcd(Frame):
         self._button = None
         # setup the initial "boot" GUI
         self.setupBoot()
+        
+    def showRiddle(self):
+        self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14),
+                                text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
+        self._lriddle.grid(row=6, column=0, columnspan=3, sticky=W)
+        global toggles
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
+        toggles.start()
     
     
 
