@@ -236,10 +236,10 @@ class Keypad(PhaseThread):
 class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
-        self._grace_end = time.time() + 2  # 2s grace period
 
     def run(self):
         self._running = True
+        self._grace_end = time.time() + 2
         while self._running:
             try:
                 value_bin = "".join([str(int(pin.value)) for pin in self._component])
@@ -253,7 +253,6 @@ class Wires(PhaseThread):
             except Exception as e:
                 print(f"[ERROR] {self.__class__.__name__} phase: {e}")
             sleep(0.1)
-
 
     def __str__(self):
         if self._defused:
@@ -319,10 +318,10 @@ class Button(PhaseThread):
 class Toggles(PhaseThread):
     def __init__(self, component, target, name="Toggles"):
         super().__init__(name, component, target)
-        self._grace_end = time.time() + 2
 
     def run(self):
         self._running = True
+        self._grace_end = time.time() + 2
         while self._running:
             try:
                 value_bin = "".join([str(int(pin.value)) for pin in self._component])
