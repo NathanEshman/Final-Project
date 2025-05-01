@@ -144,7 +144,7 @@ serial, toggles_target, wires_target = genSerial()
 # MATH MODE override for keypad phase
 if MATH_MODE:
     math_question = "√10 + 2"
-    keypad_target = "5"  # rounded from ≈5.16
+    keypad_target = "8"  # 
     passphrase = math_question
 else:
     keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
