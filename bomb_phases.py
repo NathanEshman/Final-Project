@@ -230,20 +230,22 @@ class Wires(PhaseThread):
         super().__init__(name, component, target)
 
     def run(self):
-        self._running = True
-        while self._running:
-            try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                self._value = value_bin
-                value_dec = int(value_bin, 2)
-                if value_dec == self._target:
-                    self._defused = True
-                    self._running = False
-                elif value_dec != 0 and value_dec != self._target:
-                    self._failed = True
-            except Exception as e:
-                print(f"[ERROR] Wires phase: {e}")
-            sleep(0.1)
+    self._running = True
+    while self._running:
+        try:
+            value_bin = "".join([str(int(pin.value)) for pin in self._component])
+            self._value = value_bin
+            value_dec = int(value_bin, 2)
+            if value_dec == self._target:
+                self._defused = True
+                self._running = False
+            # Only trigger a strike if value is non-zero (user interacted) and incorrect
+            elif value_dec != 0 and value_dec != self._target:
+                self._failed = True
+        except Exception as e:
+            print(f"[ERROR] {self.__class__.__name__} phase: {e}")
+        sleep(0.1)
+
 
     def __str__(self):
         if self._defused:
@@ -311,20 +313,22 @@ class Toggles(PhaseThread):
         super().__init__(name, component, target)
 
     def run(self):
-        self._running = True
-        while self._running:
-            try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                self._value = value_bin
-                value_dec = int(value_bin, 2)
-                if value_dec == self._target:
-                    self._defused = True
-                    self._running = False
-                elif value_dec != 0 and value_dec != self._target:
-                    self._failed = True
-            except Exception as e:
-                print(f"[ERROR] Toggles phase: {e}")
-            sleep(0.1)
+    self._running = True
+    while self._running:
+        try:
+            value_bin = "".join([str(int(pin.value)) for pin in self._component])
+            self._value = value_bin
+            value_dec = int(value_bin, 2)
+            if value_dec == self._target:
+                self._defused = True
+                self._running = False
+            # Only trigger a strike if value is non-zero (user interacted) and incorrect
+            elif value_dec != 0 and value_dec != self._target:
+                self._failed = True
+        except Exception as e:
+            print(f"[ERROR] {self.__class__.__name__} phase: {e}")
+        sleep(0.1)
+
 
     def __str__(self):
         if self._defused:
