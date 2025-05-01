@@ -15,7 +15,7 @@ NUM_PHASES = 4       # the total number of initial active bomb phases
 FIRST_GAME_IS_RIDDLE = True  # Add this line
 RIDDLE_MODE = True
 RIDDLE_TOGGLE_ANSWER = 2  # binary 0010, index 2 (correct answer)
-
+MATH_MODE = True
 
 if FIRST_GAME_IS_RIDDLE:
     toggles_target = 2  # binary 0010, toggle index 2
@@ -128,59 +128,9 @@ def genSerial():
 
     return serial, toggle_value, jumper_value
 
-# generates the keypad combination from a keyword and rotation key
-def genKeypadCombination():
-    # encrypts a keyword using a rotation cipher
-    def encrypt(keyword, rot):
-        cipher = ""
 
-        # encrypt each letter of the keyword using rot
-        for c in keyword:
-            cipher += chr((ord(c) - 65 + rot) % 26 + 65)
 
-        return cipher
-
-    # returns the keypad digits that correspond to the passphrase
-    def digits(passphrase):
-        combination = ""
-        keys = [ None, None, "ABC", "DEF", "GHI", "JKL", "MNO", "PRS", "TUV", "WXY" ]
-
-        # process each character of the keyword
-        for c in passphrase:
-            for i, k in enumerate(keys):
-                if (k and c in k):
-                    # map each character to its digit equivalent
-                    combination += str(i)
-
-        return combination
-
-    # the list of keywords and matching passphrases
-    keywords = { "BANDIT": "RIVER",\
-                 "BUCKLE": "FADED",\
-                 "CANOPY": "FOXES",\
-                 "DEBATE": "THROW",\
-                 "FIERCE": "TRICK",\
-                 "GIFTED": "CYCLE",\
-                 "IMPACT": "STOLE",\
-                 "LONELY": "TOADY",\
-                 "MIGHTY": "ALOOF",\
-                 "NATURE": "CARVE",\
-                 "REBORN": "CLIMB",\
-                 "RECALL": "FEIGN",\
-                 "SYSTEM": "LEAVE",\
-                 "TAKING": "SPINY",\
-                 "WIDELY": "BOUND",\
-                 "ZAGGED": "YACHT" }
-    # the rotation cipher key
-    rot = randint(1, 25)
-
-    # pick a keyword and matching passphrase
-    keyword, passphrase = choice(list(keywords.items()))
-    # encrypt the passphrase and get its combination
-    cipher_keyword = encrypt(keyword, rot)
-    combination = digits(passphrase)
-
-    return keyword, cipher_keyword, rot, combination, passphrase
+   
 
 ###############################
 # generate the bomb's specifics
@@ -192,14 +142,13 @@ def genKeypadCombination():
 serial, toggles_target, wires_target = genSerial()
 
 # MATH MODE override for keypad phase
-MATH_MODE = True
-
 if MATH_MODE:
     math_question = "√10 + 2"
     keypad_target = "5"  # rounded from ≈5.16
     passphrase = math_question
 else:
     keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
+
 
 
 # generate the color of the pushbutton (which determines how to defuse the phase)
@@ -226,8 +175,6 @@ boot_text = f"Booting...\n\x00\x00"\
             f"Initializing subsystems...\n\x00"\
             f"*System model: 102BOMBv4.2\n"\
             f"*Serial number: {serial}\n"\
-            f"Encrypting keypad...\n\x00"\
-            f"*Keyword: {cipher_keyword}; key: {rot}\n"\
-            f"*{' '.join(ascii_uppercase)}\n"\
-            f"*{' '.join([str(n % 10) for n in range(26)])}\n"\
+            f"Loading keypad challenge...\n\x00"\
+            f"*Question: {passphrase}\n"\
             f"Rendering phases...\x00"
