@@ -44,12 +44,11 @@ else:
     toggles = Toggles(component_toggles, toggles_target)
 
 toggles.start()
-
-    timer.start()
-    keypad.start()
-    wires.start()
-    button.start()
-    toggles.start()
+timer.start()
+keypad.start()
+wires.start()
+button.start()
+toggles.start()
 
 # checks the phase threads
 def check_phases():
