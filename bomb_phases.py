@@ -398,7 +398,7 @@ class RiddleToggles(Toggles):
    def __str__(self):
     if self._defused:
         return "DEFUSED"
-    try:
-        return f"{self._value}/{int(self._value, 2)}"
-    except:
+    if self._value is None:
         return "WAITING"
+    return f"{self._value}/{int(self._value, 2)}"
+
