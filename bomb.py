@@ -176,47 +176,16 @@ def turn_off():
 ##########
 # GUI Setup
 ##########
-def start_main_game():
-    global gui
-    for widget in window.winfo_children():
-        widget.destroy()
-    gui = Lcd(window)
-    gui.pack()
-    global strikes_left, active_phases
-    strikes_left = NUM_STRIKES
-    active_phases = NUM_PHASES
-    bootup()
-    
-
-
+# initialize the LCD GUI
 window = Tk()
-window.title("Defuse the Bomb")
-window.geometry("800x600")
+gui = Lcd(window)
 
-start_screen = Frame(window, bg="black")
-start_screen.pack(fill="both", expand=True)
+# initialize the bomb strikes and active phases (i.e., not yet defused)
+strikes_left = NUM_STRIKES
+active_phases = NUM_PHASES
 
-Label(
-    start_screen,
-    text="Bomb Defusal\nBy Diego Diaz, Elianna Ayala, and Nathan Eshman",
-    fg="red", bg="black",
-    font=("Courier New", 24, "bold")
-).pack(pady=40)
+# "boot" the bomb
+gui.after(1000, bootup)
 
-try:
-    img = PhotoImage(file="Start_Mouse.jpg")
-    Label(start_screen, image=img, bg="black").pack()
-except Exception as e:
-    Label(start_screen, text="[Image Not Found]", fg="white", bg="black").pack()
-
-Button(
-    start_screen,
-    text="START GAME",
-    command=start_main_game,
-    font=("Courier New", 20),
-    bg="gray20", fg="white",
-    activebackground="green", activeforeground="black"
-).pack(pady=40)
-
+# display the LCD GUI
 window.mainloop()
-
