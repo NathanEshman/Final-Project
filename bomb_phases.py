@@ -161,9 +161,10 @@ class Timer(PhaseThread):
             try:
                 if not self._paused:
                     self._update()
+                    print(f"[DEBUG] Timer value = {self._value}")  # Add this
                     self._component.print(str(self))
-                    print(f"[DEBUG] Timer value = {self._value}")  # 👈 live debug to terminal
                     if self._value == 0:
+                        print("[DEBUG] Timer hit 0")
                         self._running = False
                         break
                     sleep(self._interval)
@@ -171,9 +172,10 @@ class Timer(PhaseThread):
                 else:
                     sleep(0.1)
             except Exception as e:
-                print(f"[ERROR] Timer thread crashed: {e}")  # 👈 catches crashes
+                print(f"[ERROR] Timer crashed: {e}")
                 self._running = False
                 break
+
 
 
     # updates the timer (only internally called)
