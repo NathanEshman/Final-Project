@@ -368,7 +368,7 @@ class Toggles(PhaseThread):
 
 class RiddleToggles(Toggles):
    def run(self):
-    global gui  # ✅ Required so .destroy() and .showCorrect() work
+    global gui
     self._running = True
     self._grace_end = time.time() + 2
     print("[DEBUG] RiddleToggles thread started")
@@ -376,20 +376,24 @@ class RiddleToggles(Toggles):
         try:
             value_bin = "".join([str(int(pin.value)) for pin in self._component])
             value_dec = int(value_bin, 2)
-            self._value = value_bin
-
-            # ✅ DEBUG OUTPUT
-            print(f"[DEBUG] Riddle toggle value = {value_bin} = {value_dec}, target = {self._target}")
+            self._value = value_bin  # ✅ MAKE SURE THIS IS SET
+            print(f"[DEBUG] RiddleToggles = {value_bin}/{value_dec} (target = {self._target})")
 
             if value_dec == self._target:
-                self._defused = True  # ✅ Add this for GUI label to say DEFUSED
+                print("[DEBUG] Riddle solved!")
+                self._defused = True
                 self._running = False
                 if hasattr(gui, "_lriddle"):
                     gui._lriddle.destroy()
-                setup_actual_phases()
+                if hasattr(gui, "showCorrect"):
+                    gui.showCorrect()
+            elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
+                self._failed = True
+
         except Exception as e:
             print(f"[ERROR] RiddleToggles phase: {e}")
         sleep(0.1)
+
         
    def __str__(self):
     if self._defused:
