@@ -16,6 +16,8 @@ FIRST_GAME_IS_RIDDLE = True  # Add this line
 RIDDLE_MODE = True
 RIDDLE_TOGGLE_ANSWER = 2  # binary 0010, index 2 (correct answer)
 MATH_MODE = True
+PRIMARY_COLOR_WIRES = [0, 1, 2]  # Red = wire 0, Blue = 1, Yellow = 2
+
 
 if FIRST_GAME_IS_RIDDLE:
     toggles_target = 2  # binary 0010, toggle index 2

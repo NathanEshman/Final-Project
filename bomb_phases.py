@@ -13,6 +13,8 @@ from threading import Thread
 from time import sleep
 import os
 import sys
+from bomb_configs import PRIMARY_COLOR_WIRES
+
 
 #########
 # classes
@@ -256,23 +258,38 @@ class Keypad(PhaseThread):
 class Wires(PhaseThread):
     def __init__(self, component, target, name="Wires"):
         super().__init__(name, component, target)
+        self._locked_in = False  # 🆕 New flag
+
+    def lock_in(self):
+        self._locked_in = True
+
+    def is_correct(self):
+        # Read current unplugged state and check if the unplugged wires match the primary color wires
+        value_bin = "".join([str(int(pin.value)) for pin in self._component])
+        value_dec = int(value_bin, 2)
+        expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
+        return value_dec == expected_value
+
 
     def run(self):
-        self._running = True
-        self._grace_end = time.time() + 2
-        while self._running:
-            try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                self._value = value_bin
+    self._running = True
+    while self._running:
+        try:
+            value_bin = "".join([str(int(pin.value)) for pin in self._component])
+            self._value = value_bin
+            # No need to auto-fail — we only evaluate when button is pressed
+            if self._locked_in:
                 value_dec = int(value_bin, 2)
-                if value_dec == self._target:
+                expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
+                if value_dec == expected_value:
                     self._defused = True
                     self._running = False
-                elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
-                    self._failed = True
-            except Exception as e:
-                print(f"[ERROR] {self.__class__.__name__} phase: {e}")
-            sleep(0.1)
+                # Reset lock after checking
+                self._locked_in = False
+        except Exception as e:
+            print(f"[ERROR] Wires phase: {e}")
+        sleep(0.1)
+
 
     def __str__(self):
         if self._defused:
@@ -300,32 +317,34 @@ class Button(PhaseThread):
 
     # runs the thread
     def run(self):
-        self._running = True
-        # set the RGB LED color
-        self._rgb[0].value = False if self._color == "R" else True
-        self._rgb[1].value = False if self._color == "G" else True
-        self._rgb[2].value = False if self._color == "B" else True
-        while (self._running):
-            # get the pushbutton's state
-            self._value = self._component.value
-            # it is pressed
-            if (self._value):
-                # note it
-                self._pressed = True
-            # it is released
-            else:
-                # was it previously pressed?
-                if (self._pressed):
-                    # check the release parameters
-                    # for R, nothing else is needed
-                    # for G or B, a specific digit must be in the timer (sec) when released
+    self._running = True
+    self._rgb[0].value = False if self._color == "R" else True
+    self._rgb[1].value = False if self._color == "G" else True
+    self._rgb[2].value = False if self._color == "B" else True
+
+    while self._running:
+        self._value = self._component.value
+        if self._value:
+            self._pressed = True
+        else:
+            if self._pressed:
+                # If wires phase is active and not defused, perform wire-check logic
+                if wires._running and not wires._defused:
+                    wires.lock_in()
+                    if wires.is_correct():
+                        wires._defused = True
+                        wires._running = False
+                    else:
+                        self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
+                        print("[DEBUG] Incorrect wires, -5 seconds penalty")
+                else:
                     if (not self._target or self._target in self._timer._sec):
                         self._defused = True
                     else:
                         self._failed = True
-                    # note that the pushbutton was released
-                    self._pressed = False
-            sleep(0.1)
+                self._pressed = False
+        sleep(0.1)
+
 
     # returns the pushbutton's state as a string
     def __str__(self):
