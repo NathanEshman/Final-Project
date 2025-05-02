@@ -73,6 +73,13 @@ class Lcd(Frame):
         # the strikes left
         self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
         self._lstrikes.grid(row=5, column=2, sticky=W)
+        
+        from PIL import Image, ImageTk
+        img = Image.open("HOW MANY TRIANGLES.png").resize((400, 400))
+        self._img_triangle = ImageTk.PhotoImage(img)
+        self._limage = Label(self, image=self._img_triangle, bg="black")
+        self._limage.grid(row=7, column=0, columnspan=3)
+
         if (SHOW_BUTTONS):
             # the pause button (pauses the timer)
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
@@ -89,6 +96,8 @@ class Lcd(Frame):
         
         if RIDDLE_MODE:
             self.showRiddle()
+
+
 
 
     # lets us pause/unpause the timer (7-segment display)
@@ -317,6 +326,7 @@ class Button(PhaseThread):
 
     # runs the thread
     def run(self):
+        global triangle_puzzle
     self._running = True
     self._rgb[0].value = False if self._color == "R" else True
     self._rgb[1].value = False if self._color == "G" else True
@@ -329,6 +339,10 @@ class Button(PhaseThread):
         else:
             if self._pressed:
                 # If wires phase is active and not defused, perform wire-check logic
+                
+                if triangle_puzzle._running:
+                    triangle_puzzle.lock_in()
+
                 if wires._running and not wires._defused:
                     wires.lock_in()
                     if wires.is_correct():
@@ -344,6 +358,31 @@ class Button(PhaseThread):
                         self._failed = True
                 self._pressed = False
         sleep(0.1)
+        
+class TrianglePuzzle(PhaseThread):
+    def __init__(self, correct_answer, timer, name="TrianglePuzzle"):
+        super().__init__(name)
+        self._correct_answer = str(correct_answer)
+        self._input = ""
+        self._timer = timer
+
+    def run(self):
+        self._running = True
+        while self._running:
+            if keypad._value:
+                self._input = keypad._value
+            sleep(0.1)
+
+    def lock_in(self):
+        if self._input == self._correct_answer:
+            self._defused = True
+            self._running = False
+            print("[DEBUG] Triangle Puzzle solved!")
+        else:
+            self._timer._value = max(0, self._timer._value - 5)
+            print("[DEBUG] Wrong triangle count! -5 seconds")
+            # reset input to try again
+            keypad._value = ""
 
 
     # returns the pushbutton's state as a string

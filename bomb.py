@@ -28,6 +28,7 @@ def bootup(n=0):
 # sets up the phase threads
 def setup_phases():
     global timer, keypad, wires, button, toggles, gui  # ✅ Add gui here
+    global triangle_puzzle
 
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
@@ -36,6 +37,10 @@ def setup_phases():
     wires = Wires(component_wires, wires_target)
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
     gui.setButton(button)
+    
+    triangle_puzzle = TrianglePuzzle(correct_answer=6, timer=timer)  # Use your actual triangle count
+    triangle_puzzle.start()
+
 
     if RIDDLE_MODE:
         toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
@@ -54,6 +59,14 @@ def setup_phases():
 # checks the phase threads
 def check_phases():
     global active_phases
+    
+    
+    if triangle_puzzle._running:
+        gui._lkeypad["text"] = f"Your Count: {keypad._value}"
+        if triangle_puzzle._defused:
+            triangle_puzzle._running = False
+            active_phases -= 1
+
     
     # check the timer
     if (timer._running):
