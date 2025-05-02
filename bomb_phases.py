@@ -1,7 +1,7 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # GUI and Phase class definitions
-# Team: 
+# Team: Elianna Ayala, Nathan Eshman, Diego Diaz
 #################################
 
 # import the configs
