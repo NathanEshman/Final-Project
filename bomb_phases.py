@@ -281,23 +281,23 @@ class Wires(PhaseThread):
 
 
     def run(self):
-    self._running = True
-    while self._running:
-        try:
-            value_bin = "".join([str(int(pin.value)) for pin in self._component])
-            self._value = value_bin
-            # No need to auto-fail — we only evaluate when button is pressed
-            if self._locked_in:
-                value_dec = int(value_bin, 2)
-                expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
-                if value_dec == expected_value:
-                    self._defused = True
-                    self._running = False
-                # Reset lock after checking
-                self._locked_in = False
-        except Exception as e:
-            print(f"[ERROR] Wires phase: {e}")
-        sleep(0.1)
+        self._running = True
+        while self._running:
+            try:
+                value_bin = "".join([str(int(pin.value)) for pin in self._component])
+                self._value = value_bin
+                # No need to auto-fail — we only evaluate when button is pressed
+                if self._locked_in:
+                    value_dec = int(value_bin, 2)
+                    expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
+                    if value_dec == expected_value:
+                        self._defused = True
+                        self._running = False
+                    # Reset lock after checking
+                    self._locked_in = False
+            except Exception as e:
+                print(f"[ERROR] Wires phase: {e}")
+            sleep(0.1)
 
 
     def __str__(self):
