@@ -327,37 +327,37 @@ class Button(PhaseThread):
     # runs the thread
     def run(self):
         global triangle_puzzle
-    self._running = True
-    self._rgb[0].value = False if self._color == "R" else True
-    self._rgb[1].value = False if self._color == "G" else True
-    self._rgb[2].value = False if self._color == "B" else True
+        self._running = True
+        self._rgb[0].value = False if self._color == "R" else True
+        self._rgb[1].value = False if self._color == "G" else True
+        self._rgb[2].value = False if self._color == "B" else True
 
-    while self._running:
-        self._value = self._component.value
-        if self._value:
-            self._pressed = True
-        else:
-            if self._pressed:
-                # If wires phase is active and not defused, perform wire-check logic
-                
-                if triangle_puzzle._running:
-                    triangle_puzzle.lock_in()
+        while self._running:
+            self._value = self._component.value
+            if self._value:
+                self._pressed = True
+            else:
+                if self._pressed:
+                    # If wires phase is active and not defused, perform wire-check logic
+                    
+                    if triangle_puzzle._running:
+                        triangle_puzzle.lock_in()
 
-                if wires._running and not wires._defused:
-                    wires.lock_in()
-                    if wires.is_correct():
-                        wires._defused = True
-                        wires._running = False
+                    if wires._running and not wires._defused:
+                        wires.lock_in()
+                        if wires.is_correct():
+                            wires._defused = True
+                            wires._running = False
+                        else:
+                            self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
+                            print("[DEBUG] Incorrect wires, -5 seconds penalty")
                     else:
-                        self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
-                        print("[DEBUG] Incorrect wires, -5 seconds penalty")
-                else:
-                    if (not self._target or self._target in self._timer._sec):
-                        self._defused = True
-                    else:
-                        self._failed = True
-                self._pressed = False
-        sleep(0.1)
+                        if (not self._target or self._target in self._timer._sec):
+                            self._defused = True
+                        else:
+                            self._failed = True
+                    self._pressed = False
+            sleep(0.1)
         
 class TrianglePuzzle(PhaseThread):
     def __init__(self, correct_answer, timer, name="TrianglePuzzle"):
