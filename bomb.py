@@ -108,17 +108,17 @@ def check_phases():
             button._failed = False
     # check the toggles
     if (toggles._running):
-        # update the GUI
         gui._ltoggles["text"] = f"Toggles: {toggles}"
-        # the phase is defused -> stop the thread
         if (toggles._defused):
             toggles._running = False
             active_phases -= 1
-        # the phase has failed -> strike
+            # Remove the riddle label if it exists
+            if hasattr(gui, "_lriddle"):
+                gui._lriddle.destroy()
         elif (toggles._failed):
             strike()
-            # reset the toggles
             toggles._failed = False
+
 
     # note the strikes on the GUI
     gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
