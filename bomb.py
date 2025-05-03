@@ -24,18 +24,6 @@ def bootup(n=0):
             gui._lscroll["text"] += boot_text[n]
         gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
-        
-def start_sequence():
-    gui.setup()
-    if RPi:
-        setup_phases()
-        check_phases()
-
-gui._lscroll["text"] = ""               # clear screen
-gui.after(1000, bootup)                # boot animation
-gui.showStartScreen(start_sequence)    # show "Start" button screen
-window.mainloop()
-
       
 
 # sets up the phase threads
