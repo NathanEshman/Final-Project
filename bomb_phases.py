@@ -1,7 +1,7 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # GUI and Phase class definitions
-# Team: Elianna Ayala, Nathan Eshman, Diego Diaz
+# Team: Elianna Ayala, Nathan Eshman, Diego Diaz,
 #################################
 
 # import the configs
@@ -69,10 +69,7 @@ class Lcd(Frame):
                           text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
             label.pack()
         self.showPuzzle("riddle", builder)
-        global toggles
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
-        toggles.start()
-
+       
     def showTrianglePuzzle(self):
         def builder(frame):
             img = Image.open("HOW MANY TRIANGLES.png").resize((400, 400))
@@ -119,6 +116,8 @@ class Lcd(Frame):
         self._lbutton.grid(row=4, column=0, columnspan=3, sticky=W)
         self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
+        self._lriddle_debug = Label(self, bg="black", fg="cyan", font=("Courier New", 14), text="")
+        self._lriddle_debug.grid(row=6, column=0, columnspan=2, sticky=W)
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
 
@@ -479,25 +478,26 @@ class RiddleToggles(Toggles):
             print(f"[ERROR] RiddleToggles phase: {e}")
         sleep(0.1)
     
-    def evaluate(self):
-        global gui, current_phase_index, strikes_left, timer
+  def evaluate(self):
+    global gui, current_phase_index, strikes_left, timer
 
-        value_bin = "".join([str(int(pin.value)) for pin in self._component])
-        value_dec = int(value_bin, 2)
-        print(f"[DEBUG] Evaluating RiddleToggles: {value_bin} ({value_dec})")
+    value_bin = "".join([str(int(pin.value)) for pin in self._component])
+    value_dec = int(value_bin, 2)
+    self._value = value_bin
+    print(f"[DEBUG] Evaluating RiddleToggles: {value_bin} ({value_dec})")
 
-        if value_dec == self._target:
-            self._defused = True
-            self._running = False
-            gui.clearPuzzle("riddle")
-            current_phase_index += 1
-            gui.after(200, show_current_phase)
-            print("[DEBUG] Correct toggle answer — moving to next puzzle.")
-        else:
-            print("[DEBUG] Incorrect toggle — strike and time penalty.")
-            strikes_left -= 1
-            timer._value = max(0, timer._value - 5)
-
+    if value_dec == 2:
+        self._defused = True
+        self._running = False
+        gui.clearPuzzle("riddle")
+        current_phase_index += 1
+        gui.after(200, show_current_phase)
+        print("[DEBUG] Correct toggle answer — moving to next puzzle.")
+    elif value_dec != 0:
+        self._failed = True  # triggers strike in check_phases()
+        print("[DEBUG] Incorrect toggle — failed flag set.")
+    else:
+        print("[DEBUG] No toggles flipped yet.")
 
         
    def __str__(self):
