@@ -36,6 +36,27 @@ class Lcd(Frame):
         self._puzzle_frames[name] = frame
         frame.grid(row=7, column=0, columnspan=3)
         widget_builder(frame)
+        
+    def showStartScreen(self, on_start):
+        self._start_screen = Frame(self, bg="black")
+        self._start_screen.grid(row=1, column=0, columnspan=3, rowspan=7, sticky="nsew")
+
+        title = Label(self._start_screen, text="Welcome to Bomb Game", fg="white", bg="black", font=("Courier New", 24))
+        title.pack(pady=40)
+
+        subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
+        subtitle.pack(pady=20)
+
+        start_btn = Button(self._start_screen, text="Start Game", font=("Courier New", 18), command=lambda: self.startGame(on_start))
+        start_btn.pack(pady=40)
+        
+    def startGame(self, on_start):
+        if self._start_screen:
+            self._start_screen.destroy()
+            self._start_screen = None
+        on_start()
+
+
 
     def clearPuzzle(self, name):
         frame = self._puzzle_frames.pop(name, None)
