@@ -20,6 +20,10 @@ def bootup(n=0):
             gui._lscroll["text"] = boot_text.replace("\x00", "")
         else:
             gui._lscroll["text"] = ""  # 🔁 This clears the boot text once animated bootup is done
+        else:
+        if (boot_text[n] != "\x00"):
+            gui._lscroll["text"] += boot_text[n]
+        gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
 def start_sequence():
     gui.setup()
@@ -30,10 +34,10 @@ def start_sequence():
 gui._lscroll["text"] = ""  # clear boot messages
 gui.showStartScreen(start_sequence)
 
-        else:
-            if (boot_text[n] != "\x00"):
-                gui._lscroll["text"] += boot_text[n]
-            gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
+    else:
+        if (boot_text[n] != "\x00"):
+            gui._lscroll["text"] += boot_text[n]
+        gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
 # sets up the phase threads
 def setup_phases():
