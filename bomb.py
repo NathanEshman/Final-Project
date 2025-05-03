@@ -31,8 +31,10 @@ def start_sequence():
         setup_phases()
         check_phases()
 
-gui._lscroll["text"] = ""  # clear boot messages
-gui.showStartScreen(start_sequence)
+gui._lscroll["text"] = ""               # clear screen
+gui.after(1000, bootup)                # boot animation
+gui.showStartScreen(start_sequence)    # show "Start" button screen
+window.mainloop()
 
       
 
