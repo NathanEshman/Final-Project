@@ -457,8 +457,8 @@ class RiddleToggles(Toggles):
             print(f"[ERROR] RiddleToggles phase: {e}")
         sleep(0.1)
     
-  def evaluate(self):
-    global gui, current_phase_index, strikes_left, timer
+    def evaluate(self):
+        global gui, current_phase_index, strikes_left, timer
 
     value_bin = "".join([str(int(pin.value)) for pin in self._component])
     value_dec = int(value_bin, 2)
