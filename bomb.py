@@ -18,6 +18,9 @@ def bootup(n=0):
     if (not ANIMATE or n == len(boot_text)):
         if (not ANIMATE):
             gui._lscroll["text"] = boot_text.replace("\x00", "")
+        else:
+            gui._lscroll["text"] = ""  # 🔁 This clears the boot text once animated bootup is done
+
         gui.setup()
         if (RPi):
             setup_phases()
