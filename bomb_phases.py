@@ -99,7 +99,7 @@ class Lcd(Frame):
         self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
-        self._lstrikes.grid(row=6, column=2, sticky=SE, padx=20, pady=10)
+        self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
 
 
 
@@ -341,6 +341,10 @@ class Button(PhaseThread):
                     
                     if triangle_puzzle._running:
                         triangle_puzzle.lock_in()
+                        
+                    if toggles._running and isinstance(toggles, RiddleToggles):
+                        toggles.evaluate()
+
 
                     if wires._running and not wires._defused:
                         wires.lock_in()
@@ -447,6 +451,26 @@ class RiddleToggles(Toggles):
         except Exception as e:
             print(f"[ERROR] RiddleToggles phase: {e}")
         sleep(0.1)
+    
+    def evaluate(self):
+        global gui, current_phase_index, strikes_left, timer
+
+        value_bin = "".join([str(int(pin.value)) for pin in self._component])
+        value_dec = int(value_bin, 2)
+        print(f"[DEBUG] Evaluating RiddleToggles: {value_bin} ({value_dec})")
+
+        if value_dec == self._target:
+            self._defused = True
+            self._running = False
+            gui.clearPuzzle("riddle")
+            current_phase_index += 1
+            gui.after(200, show_current_phase)
+            print("[DEBUG] Correct toggle answer — moving to next puzzle.")
+        else:
+            print("[DEBUG] Incorrect toggle — strike and time penalty.")
+            strikes_left -= 1
+            timer._value = max(0, timer._value - 5)
+
 
         
    def __str__(self):
