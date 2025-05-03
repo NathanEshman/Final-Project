@@ -19,10 +19,6 @@ MATH_MODE = True
 PRIMARY_COLOR_WIRES = [0, 1, 2]  # Red = wire 0, Blue = 1, Yellow = 2
 
 
-if FIRST_GAME_IS_RIDDLE:
-    toggles_target = 2  # binary 0010, toggle index 2
-
-
 # imports
 from random import randint, shuffle, choice
 from string import ascii_uppercase
@@ -142,6 +138,8 @@ def genSerial():
 #  toggles_target: the toggles phase defuse value
 #  wires_target: the wires phase defuse value
 serial, toggles_target, wires_target = genSerial()
+if RIDDLE_MODE:
+    toggles_target = RIDDLE_TOGGLE_ANSWER
 
 # MATH MODE override for keypad phase
 if MATH_MODE:
