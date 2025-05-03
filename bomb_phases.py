@@ -89,18 +89,16 @@ class Lcd(Frame):
         self.pack(fill=BOTH, expand=True)
 
     def setup(self):
-        self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
-        self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
-        self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Keypad phase: ")
+        # create empty placeholder labels (will be used selectively)
+        self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._lkeypad.grid(row=2, column=0, columnspan=3, sticky=W)
-        self._lwires = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Wires phase: ")
+        self._lwires = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._lwires.grid(row=3, column=0, columnspan=3, sticky=W)
-        self._lbutton = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Button phase: ")
+        self._lbutton = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._lbutton.grid(row=4, column=0, columnspan=3, sticky=W)
-        self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Toggles phase: ")
+        self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
-        self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
-        self._lstrikes.grid(row=5, column=2, sticky=W)
+
 
         if SHOW_BUTTONS:
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
