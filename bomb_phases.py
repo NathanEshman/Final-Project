@@ -39,16 +39,27 @@ class Lcd(Frame):
         
     def showStartScreen(self, on_start):
         self._start_screen = Frame(self, bg="black")
-        self._start_screen.place(relx=0.5, rely=0.5, anchor="center")  # <-- use .place() instead of .grid()
+        self._start_screen.place(relx=0.5, rely=0.5, anchor="center")
 
         title = Label(self._start_screen, text="Welcome to Bomb Game", fg="white", bg="black", font=("Courier New", 24))
         title.pack(pady=40)
 
         subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
         subtitle.pack(pady=20)
+        
+        press_label = Label(self._start_screen, text="Press the physical button to begin...", fg="white", bg="black", font=("Courier New", 18))
+        press_label.pack(pady=40)
 
-        start_btn = Button(self._start_screen, text="Start Game", font=("Courier New", 18), command=lambda: self.startGame(on_start))
-        start_btn.pack(pady=40)
+        # Start polling for hardware button press
+        self.after(100, lambda: self.wait_for_physical_start(on_start))
+    
+    def wait_for_physical_start(self, on_start):
+    if button._component.value:  # Button is pressed
+        self._start_screen.destroy()
+        self._start_screen = None
+        on_start()
+    else:
+        self.after(100, lambda: self.wait_for_physical_start(on_start))
 
         
     def startGame(self, on_start):
