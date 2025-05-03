@@ -47,14 +47,14 @@ class Lcd(Frame):
         subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
         subtitle.pack(pady=20)
         
-        press_label = Label(self._start_screen, text="Press the physical button to begin...", fg="white", bg="black", font=("Courier New", 18))
+        press_label = Label(self._start_screen, text="Press the physical button to begin", fg="white", bg="black", font=("Courier New", 18))
         press_label.pack(pady=40)
 
         # Start polling for hardware button press
         self.after(100, lambda: self.wait_for_physical_start(on_start))
     
     def wait_for_physical_start(self, on_start):
-        if button._component.value:  # Button is pressed
+        if self._button._component.value:
             self._start_screen.destroy()
             self._start_screen = None
             on_start()
