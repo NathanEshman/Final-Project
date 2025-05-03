@@ -21,10 +21,15 @@ def bootup(n=0):
         else:
             gui._lscroll["text"] = ""  # 🔁 This clears the boot text once animated bootup is done
 
-        gui.setup()
-        if (RPi):
-            setup_phases()
-            check_phases()
+def start_sequence():
+    gui.setup()
+    if RPi:
+        setup_phases()
+        check_phases()
+
+gui._lscroll["text"] = ""  # clear boot messages
+gui.showStartScreen(start_sequence)
+
     else:
         if (boot_text[n] != "\x00"):
             gui._lscroll["text"] += boot_text[n]
