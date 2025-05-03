@@ -326,6 +326,7 @@ class Button(PhaseThread):
     # runs the thread
     def run(self):
         global triangle_puzzle
+        global toggles
         self._running = True
         self._rgb[0].value = False if self._color == "R" else True
         self._rgb[1].value = False if self._color == "G" else True
@@ -335,16 +336,25 @@ class Button(PhaseThread):
             self._value = self._component.value
             if self._value:
                 self._pressed = True
+                
+                
+
             else:
                 if self._pressed:
                     # If wires phase is active and not defused, perform wire-check logic
+                    print("[DEBUG] Button pressed and released")
                     
                     if triangle_puzzle._running:
                         triangle_puzzle.lock_in()
                         
                     if toggles._running and isinstance(toggles, RiddleToggles):
                         toggles.evaluate()
-
+                        
+                    else:
+                        if (not self._target or self._target in self._timer._sec):
+                            self._defused = True
+                        else:
+                            self._failed = True
 
                     if wires._running and not wires._defused:
                         wires.lock_in()
@@ -354,11 +364,7 @@ class Button(PhaseThread):
                         else:
                             self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
                             print("[DEBUG] Incorrect wires, -5 seconds penalty")
-                    else:
-                        if (not self._target or self._target in self._timer._sec):
-                            self._defused = True
-                        else:
-                            self._failed = True
+                    
                     self._pressed = False
             sleep(0.1)
         
