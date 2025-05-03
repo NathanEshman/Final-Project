@@ -98,6 +98,9 @@ class Lcd(Frame):
         self._lbutton.grid(row=4, column=0, columnspan=3, sticky=W)
         self._ltoggles = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
+        self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
+        self._lstrikes.grid(row=6, column=2, sticky=SE, padx=20, pady=10)
+
 
 
         if SHOW_BUTTONS:
