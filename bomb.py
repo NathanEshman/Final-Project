@@ -9,6 +9,8 @@ from bomb_configs import *
 # import the phases
 from bomb_phases import *
 
+phase_order = ["riddle", "keypad", "wires", "triangle"]
+current_phase_index = 0
 
 ###########
 # generates the bootup sequence on the LCD
@@ -54,6 +56,20 @@ def setup_phases():
     wires.start()
     button.start()
     toggles.start()
+    triangle_puzzle.start()
+
+    gui.after(200, show_current_phase)
+    
+def show_current_phase():
+    phase = phase_order[current_phase_index]
+    if phase == "riddle":
+        gui.showRiddle()
+    elif phase == "keypad":
+        gui.showKeypadPuzzle()
+    elif phase == "wires":
+        gui.showWiresPuzzle()
+    elif phase == "triangle":
+        gui.showTrianglePuzzle()
 
 
 # checks the phase threads
