@@ -15,13 +15,16 @@ current_phase_index = 0
 ###########
 # generates the bootup sequence on the LCD
 def bootup(n=0):
-    if (not ANIMATE or n == len(boot_text)):
-        if (not ANIMATE):
-            gui._lscroll["text"] = boot_text.replace("\x00", "")
-        else:
-            gui._lscroll["text"] = ""  # 🔁 This clears the boot text once animated bootup is done
-        
+    if not ANIMATE:
+        gui._lscroll["text"] = boot_text.replace("\x00", "")
+    elif n == len(boot_text):
+        gui._lscroll["text"] = ""
+    else:
+        if boot_text[n] != "\x00":
+            gui._lscroll["text"] += boot_text[n]
+        gui.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
+        
 def start_sequence():
     gui.setup()
     if RPi:
@@ -31,6 +34,7 @@ def start_sequence():
 gui._lscroll["text"] = ""  # clear boot messages
 gui.showStartScreen(start_sequence)
 
+      
 
 # sets up the phase threads
 def setup_phases():
