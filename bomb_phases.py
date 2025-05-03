@@ -48,10 +48,7 @@ class Lcd(Frame):
                           text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
             label.pack()
         self.showPuzzle("riddle", builder)
-        global toggles
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
-        toggles.start()
-
+       
     def showTrianglePuzzle(self):
         def builder(frame):
             img = Image.open("HOW MANY TRIANGLES.png").resize((400, 400))
