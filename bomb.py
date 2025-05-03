@@ -204,12 +204,15 @@ def start_sequence():
 window = Tk()
 gui = Lcd(window)
 
-# initialize the bomb strikes and active phases (i.e., not yet defused)
+# initialize game state
 strikes_left = NUM_STRIKES
 active_phases = NUM_PHASES
 
-# "boot" the bomb
+# create button early so it's ready
+button = Button(component_button_state, component_button_RGB, button_target, button_color, None)
+gui.setButton(button)
+
+# now show start screen AFTER button is linked
 gui.showStartScreen(start_sequence)
 
-# display the LCD GUI
 window.mainloop()
