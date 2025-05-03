@@ -39,7 +39,7 @@ class Lcd(Frame):
         
     def showStartScreen(self, on_start):
         self._start_screen = Frame(self, bg="black")
-        self._start_screen.grid(row=1, column=0, columnspan=3, rowspan=7, sticky="nsew")
+        self._start_screen.place(relx=0.5, rely=0.5, anchor="center")  # <-- use .place() instead of .grid()
 
         title = Label(self._start_screen, text="Welcome to Bomb Game", fg="white", bg="black", font=("Courier New", 24))
         title.pack(pady=40)
@@ -49,6 +49,7 @@ class Lcd(Frame):
 
         start_btn = Button(self._start_screen, text="Start Game", font=("Courier New", 18), command=lambda: self.startGame(on_start))
         start_btn.pack(pady=40)
+
         
     def startGame(self, on_start):
         if self._start_screen:
