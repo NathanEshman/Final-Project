@@ -192,6 +192,11 @@ def turn_off():
     for pin in button._rgb:
         pin.value = True
 
+def start_sequence():
+    gui.after(100, bootup)
+    gui.after(5000, setup_phases)
+    gui.after(5100, check_phases)
+
 ##########
 # GUI Setup
 ##########
@@ -204,7 +209,7 @@ strikes_left = NUM_STRIKES
 active_phases = NUM_PHASES
 
 # "boot" the bomb
-gui.after(1000, bootup)
+gui.showStartScreen(start_sequence)
 
 # display the LCD GUI
 window.mainloop()
