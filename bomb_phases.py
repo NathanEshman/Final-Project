@@ -54,12 +54,19 @@ class Lcd(Frame):
         self.after(100, lambda: self.wait_for_physical_start(on_start))
     
     def wait_for_physical_start(self, on_start):
+        if self._button is None:
+            print("[DEBUG] Waiting for button to be set...")
+            self.after(100, lambda: self.wait_for_physical_start(on_start))
+            return
+
         if self._button._component.value:
+            print("[DEBUG] Button pressed — starting game.")
             self._start_screen.destroy()
             self._start_screen = None
             on_start()
         else:
             self.after(100, lambda: self.wait_for_physical_start(on_start))
+
 
         
     def startGame(self, on_start):
