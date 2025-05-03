@@ -193,9 +193,17 @@ def turn_off():
         pin.value = True
 
 def start_sequence():
-    gui.after(100, bootup)
-    gui.after(5000, setup_phases)
-    gui.after(5100, check_phases)
+    bootup()
+
+    def after_boot():
+        gui.setup()
+        if RPi:
+            setup_phases()
+            check_phases()
+
+    # Delay just long enough to finish boot text, then show puzzles
+    gui.after(4000, after_boot)
+
 
 ##########
 # GUI Setup
