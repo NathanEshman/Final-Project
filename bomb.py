@@ -196,15 +196,15 @@ def start_sequence():
     bootup()
 
     def after_boot():
-    gui.setup()
-    if FIRST_GAME_IS_RIDDLE or RIDDLE_MODE:
-        gui.showRiddle()  # ✅ Moved here to appear AFTER bootup
-    if RPi:
-        setup_phases()
-        check_phases()
+        gui.setup()
+        if FIRST_GAME_IS_RIDDLE or RIDDLE_MODE:
+            gui.showRiddle()  # ✅ Moved here to appear AFTER bootup
+        if RPi:
+            setup_phases()
+            check_phases()
 
-    # Delay just long enough to finish boot text, then show puzzles
-    gui.after(4000, after_boot)
+        # Delay just long enough to finish boot text, then show puzzles
+        gui.after(4000, after_boot)
 
 
 ##########
