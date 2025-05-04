@@ -448,6 +448,30 @@ class TrianglePuzzle(PhaseThread):
         else:
             return str("Pressed" if self._value else "Released")
 
+
+class BaseTogglePhase(Thread):
+    def __init__(self, component, target, name="BaseToggle"):
+        super().__init__(name=name, daemon=True)
+        self._component = component
+        self._target = target
+        self._value = None
+        self._defused = False
+        self._failed = False
+        self._running = False
+
+    def read_value(self):
+        value_bin = "".join([str(int(pin.value)) for pin in self._component])
+        self._value = value_bin
+        value_dec = int(value_bin, 2)
+        return value_bin, value_dec
+
+    def __str__(self):
+        if self._defused:
+            return "DEFUSED"
+        if self._value is None:
+            return "WAITING"
+        return f"{self._value}/{int(self._value, 2)}"
+
 # the toggle switches phase
 class Toggles(BaseTogglePhase):
     def run(self):
