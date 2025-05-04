@@ -156,11 +156,7 @@ class Lcd(Frame):
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
 
-        if FIRST_GAME_IS_RIDDLE:
-            self.showRiddle()
-        if RIDDLE_MODE:
-            self.showRiddle()
-
+        
     def setTimer(self, timer):
         self._timer = timer
 
