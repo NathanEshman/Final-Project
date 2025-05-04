@@ -492,78 +492,36 @@ class Toggles(BaseTogglePhase):
 
 class RiddleToggles(BaseTogglePhase):
     def run(self):
-        global gui, current_phase_index, strikes_left
-        self._running = True
-        while self._running:
-            try:
-                _, value_dec = self.read_value()
-                print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
+    global gui, current_phase_index, strikes_left
+    self._running = True
+    while self._running:
+        try:
+            _, value_dec = self.read_value()
+            print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
 
-                if value_dec == self._target:
-                    self._defused = True
-                    self._running = False
-                    if hasattr(gui, "_lriddle"):
-                        gui._lriddle.destroy()
-                    if hasattr(gui, "showCorrect"):
-                        gui.showCorrect()
-                    current_phase_index += 1
-                    gui.after(200, show_current_phase)
+            if value_dec == self._target:
+                self._defused = True
+                self._running = False
+                print("[DEBUG] Riddle defused!")
+                if hasattr(gui, "_lriddle"):
+                    gui._lriddle.destroy()
+                if hasattr(gui, "showCorrect"):
+                    gui.showCorrect()
+                current_phase_index += 1
+                gui.after(200, show_current_phase)
 
-                elif value_dec != 0 and value_dec != self._target:
-                    if not self._failed:
-                        print("[DEBUG] Incorrect riddle toggles — strike + retry")
-                        self._failed = True
-                        strikes_left -= 1
-                        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-                        if strikes_left == 0:
-                            self._running = False
-                        else:
-                            sleep(2)  # cooldown
-                            self._failed = False
+            elif value_dec != 0 and value_dec != self._target:
+                if not self._failed:
+                    print("[DEBUG] Incorrect riddle toggles — strike + retry")
+                    self._failed = True
+                    strikes_left -= 1
+                    gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                    if strikes_left == 0:
+                        self._running = False
+                    else:
+                        sleep(2)  # cooldown
+                        self._failed = False
 
-            except Exception as e:
-                print(f"[ERROR] RiddleToggles: {e}")
-            sleep(0.1)
-
-# Simulated toggle switches (test-only, no GPIO)
-class TestToggles(BaseTogglePhase):
-    def __init__(self, target, name="TestToggles"):
-        super().__init__(component=None, target=target, name=name)
-        self._virtual_state = [0, 0, 0, 0]  # simulate 4 toggles OFF
-
-    def set_state(self, state_bits):
-        if len(state_bits) != 4:
-            raise ValueError("Toggle state must be a 4-bit list")
-        self._virtual_state = state_bits
-
-    def run(self):
-        global gui, current_phase_index, strikes_left
-        self._running = True
-        while self._running:
-            try:
-                value_bin = "".join(str(bit) for bit in self._virtual_state)
-                self._value = value_bin
-                value_dec = int(value_bin, 2)
-                print(f"[TEST] Simulated Toggles = {value_bin}/{value_dec} (target={self._target})")
-
-                if value_dec == self._target:
-                    self._defused = True
-                    self._running = False
-                    print("[TEST] Simulated toggles defused!")
-                    current_phase_index += 1
-                    gui.after(200, show_current_phase)
-                elif value_dec != 0 and value_dec != self._target:
-                    if not self._failed:
-                        print("[TEST] Incorrect simulated toggles — strike")
-                        self._failed = True
-                        strikes_left -= 1
-                        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-                        if strikes_left == 0:
-                            self._running = False
-                        else:
-                            sleep(2)
-                            self._failed = False
-            except Exception as e:
-                print(f"[TEST ERROR] {e}")
-            sleep(0.1)
-
+        except Exception as e:
+            print(f"[ERROR] RiddleToggles: {e}")
+        sleep(0.1)
