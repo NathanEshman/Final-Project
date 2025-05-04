@@ -44,8 +44,8 @@ def setup_phases():
 
 
     if RIDDLE_MODE:
-        toggles = TestToggles(RIDDLE_TOGGLE_ANSWER)  # ← for test mode only
-    else:
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
+     else:
         toggles = Toggles(component_toggles, toggles_target)
 
 
