@@ -449,48 +449,33 @@ class TrianglePuzzle(PhaseThread):
             return str("Pressed" if self._value else "Released")
 
 # the toggle switches phase
-class Toggles(PhaseThread):
-    def __init__(self, component, target, name="Toggles"):
-        super().__init__(name, component, target)
-
+class Toggles(BaseTogglePhase):
     def run(self):
         self._running = True
-        self._grace_end = time.time() + 2
         while self._running:
             try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                self._value = value_bin
-                value_dec = int(value_bin, 2)
+                _, value_dec = self.read_value()
                 if value_dec == self._target:
                     self._defused = True
                     self._running = False
-                elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
+                elif value_dec != 0 and value_dec != self._target:
                     self._failed = True
+                    self._running = False
             except Exception as e:
-                print(f"[ERROR] {self.__class__.__name__} phase: {e}")
+                print(f"[ERROR] Toggles: {e}")
             sleep(0.1)
 
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        if self._value is None:
-            return "WAITING"
-        return f"{self._value}/{int(self._value, 2)}"
 
-class RiddleToggles(Toggles):
+class RiddleToggles(BaseTogglePhase):
     def run(self):
-        global gui, current_phase_index
+        global gui, current_phase_index, strikes_left
         self._running = True
-        print("[DEBUG] RiddleToggles thread started")
         while self._running:
             try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                value_dec = int(value_bin, 2)
-                self._value = value_bin
-                print(f"[DEBUG] RiddleToggles = {value_bin}/{value_dec} (target = {self._target})")
+                _, value_dec = self.read_value()
+                print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
 
                 if value_dec == self._target:
-                    print("[DEBUG] Riddle solved!")
                     self._defused = True
                     self._running = False
                     if hasattr(gui, "_lriddle"):
@@ -501,16 +486,17 @@ class RiddleToggles(Toggles):
                     gui.after(200, show_current_phase)
 
                 elif value_dec != 0 and value_dec != self._target:
-                    self._failed = True
-                    print("[DEBUG] Incorrect riddle toggles — failed triggered.")
+                    if not self._failed:
+                        print("[DEBUG] Incorrect riddle toggles — strike + retry")
+                        self._failed = True
+                        strikes_left -= 1
+                        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        if strikes_left == 0:
+                            self._running = False
+                        else:
+                            sleep(2)  # cooldown
+                            self._failed = False
 
             except Exception as e:
-                print(f"[ERROR] RiddleToggles phase: {e}")
+                print(f"[ERROR] RiddleToggles: {e}")
             sleep(0.1)
-
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        if self._value is None:
-            return "WAITING"
-        return f"{self._value}/{int(self._value, 2)}"
