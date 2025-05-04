@@ -492,36 +492,36 @@ class Toggles(BaseTogglePhase):
 
 class RiddleToggles(BaseTogglePhase):
     def run(self):
-    global gui, current_phase_index, strikes_left
-    self._running = True
-    while self._running:
-        try:
-            _, value_dec = self.read_value()
-            print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
+        global gui, current_phase_index, strikes_left
+        self._running = True
+        while self._running:
+            try:
+                _, value_dec = self.read_value()
+                print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
 
-            if value_dec == self._target:
-                self._defused = True
-                self._running = False
-                print("[DEBUG] Riddle defused!")
-                if hasattr(gui, "_lriddle"):
-                    gui._lriddle.destroy()
-                if hasattr(gui, "showCorrect"):
-                    gui.showCorrect()
-                current_phase_index += 1
-                gui.after(200, show_current_phase)
+                if value_dec == self._target:
+                    self._defused = True
+                    self._running = False
+                    print("[DEBUG] Riddle defused!")
+                    if hasattr(gui, "_lriddle"):
+                        gui._lriddle.destroy()
+                    if hasattr(gui, "showCorrect"):
+                        gui.showCorrect()
+                    current_phase_index += 1
+                    gui.after(200, show_current_phase)
 
-            elif value_dec != 0 and value_dec != self._target:
-                if not self._failed:
-                    print("[DEBUG] Incorrect riddle toggles — strike + retry")
-                    self._failed = True
-                    strikes_left -= 1
-                    gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-                    if strikes_left == 0:
-                        self._running = False
-                    else:
-                        sleep(2)  # cooldown
-                        self._failed = False
+                elif value_dec != 0 and value_dec != self._target:
+                    if not self._failed:
+                        print("[DEBUG] Incorrect riddle toggles — strike + retry")
+                        self._failed = True
+                        strikes_left -= 1
+                        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        if strikes_left == 0:
+                            self._running = False
+                        else:
+                            sleep(2)  # cooldown
+                            self._failed = False
 
-        except Exception as e:
-            print(f"[ERROR] RiddleToggles: {e}")
-        sleep(0.1)
+            except Exception as e:
+                print(f"[ERROR] RiddleToggles: {e}")
+            sleep(0.1)
