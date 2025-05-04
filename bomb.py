@@ -44,10 +44,10 @@ def setup_phases():
 
 
     if RIDDLE_MODE:
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
-        print("[DEBUG] RiddleToggles phase initialized")
+        toggles = TestToggles(RIDDLE_TOGGLE_ANSWER)  # ← for test mode only
     else:
         toggles = Toggles(component_toggles, toggles_target)
+
 
     # ✅ Start threads AFTER everything is assigned
     timer.start()
@@ -199,7 +199,9 @@ def start_sequence():
         gui.setup()
         if RPi:
             setup_phases()
+            toggles.set_state([0, 1, 0, 0])  # ✅ Simulate toggles with value = 2
             check_phases()
+
 
     # Delay just long enough to finish boot text, then show puzzles
     gui.after(4000, after_boot)
