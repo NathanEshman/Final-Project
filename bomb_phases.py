@@ -99,7 +99,7 @@ class Lcd(Frame):
        
     def showTrianglePuzzle(self):
         def builder(frame):
-            img = Image.open("HOW MANY TRIANGLES.png").resize((400, 400))
+            img = Image.open("HOW MANY TRIANGLES.png").resize((1920, 1080))
             self._img_triangle = ImageTk.PhotoImage(img)
             label_img = Label(frame, image=self._img_triangle, bg="black")
             label_img.pack()
@@ -478,33 +478,38 @@ class Toggles(PhaseThread):
         return f"{self._value}/{int(self._value, 2)}"
 
 class RiddleToggles(Toggles):
-   def run(self):
-    global gui
-    self._running = True
-    self._grace_end = time.time() + 2
-    print("[DEBUG] RiddleToggles thread started")
-    while self._running:
-        try:
-            value_bin = "".join([str(int(pin.value)) for pin in self._component])
-            value_dec = int(value_bin, 2)
-            self._value = value_bin  # ✅ MAKE SURE THIS IS SET
-            print(f"[DEBUG] RiddleToggles = {value_bin}/{value_dec} (target = {self._target})")
+    def run(self):
+        global gui, current_phase_index
+        self._running = True
+        print("[DEBUG] RiddleToggles thread started")
+        while self._running:
+            try:
+                value_bin = "".join([str(int(pin.value)) for pin in self._component])
+                value_dec = int(value_bin, 2)
+                self._value = value_bin
+                print(f"[DEBUG] RiddleToggles = {value_bin}/{value_dec} (target = {self._target})")
 
-            if value_dec == self._target:
-                print("[DEBUG] Riddle solved!")
-                self._defused = True
-                self._running = False
-                if hasattr(gui, "_lriddle"):
-                    gui._lriddle.destroy()
-                if hasattr(gui, "showCorrect"):
-                    gui.showCorrect()
-            elif time.time() > self._grace_end and value_dec != 0 and value_dec != self._target:
-                self._failed = True
+                if value_dec == self._target:
+                    print("[DEBUG] Riddle solved!")
+                    self._defused = True
+                    self._running = False
+                    if hasattr(gui, "_lriddle"):
+                        gui._lriddle.destroy()
+                    if hasattr(gui, "showCorrect"):
+                        gui.showCorrect()
+                    current_phase_index += 1
+                    gui.after(200, show_current_phase)
 
-        except Exception as e:
-            print(f"[ERROR] RiddleToggles phase: {e}")
-        sleep(0.1)
+                elif value_dec != 0 and value_dec != self._target:
+                    self._failed = True
+                    print("[DEBUG] Incorrect riddle toggles — failed triggered.")
+
+            except Exception as e:
+                print(f"[ERROR] RiddleToggles phase: {e}")
+            sleep(0.1)
+
     
+    print("[DEBUG] evaluate() was called")
     def evaluate(self):
         global gui, current_phase_index, strikes_left, timer
 
