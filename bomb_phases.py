@@ -509,27 +509,27 @@ class RiddleToggles(Toggles):
             sleep(0.1)
 
     
-    print("[DEBUG] evaluate() was called")
     def evaluate(self):
         global gui, current_phase_index, strikes_left, timer
 
-    value_bin = "".join([str(int(pin.value)) for pin in self._component])
-    value_dec = int(value_bin, 2)
-    self._value = value_bin
-    print(f"[DEBUG] Evaluating RiddleToggles: {value_bin} ({value_dec})")
+        value_bin = "".join([str(int(pin.value)) for pin in self._component])
+        value_dec = int(value_bin, 2)
+        self._value = value_bin
+        print(f"[DEBUG] Evaluating RiddleToggles: {value_bin} ({value_dec})")
 
-    if value_dec == 2:
-        self._defused = True
-        self._running = False
-        gui.clearPuzzle("riddle")
-        current_phase_index += 1
-        gui.after(200, show_current_phase)
-        print("[DEBUG] Correct toggle answer — moving to next puzzle.")
-    elif value_dec != 0:
-        self._failed = True  # triggers strike in check_phases()
-        print("[DEBUG] Incorrect toggle — failed flag set.")
-    else:
-        print("[DEBUG] No toggles flipped yet.")
+        if value_dec == 2:
+            self._defused = True
+            self._running = False
+            gui.clearPuzzle("riddle")
+            current_phase_index += 1
+            gui.after(200, show_current_phase)
+            print("[DEBUG] Correct toggle answer — moving to next puzzle.")
+        elif value_dec != 0:
+            self._failed = True  # triggers strike in check_phases()
+            print("[DEBUG] Incorrect toggle — failed flag set.")
+        else:
+            print("[DEBUG] No toggles flipped yet.")
+
 
         
    def __str__(self):
