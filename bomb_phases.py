@@ -357,7 +357,7 @@ class Wires(PhaseThread):
 
 # the pushbutton phase
 class Button(PhaseThread):
-    def __init__(self, component_state, component_rgb, target, color, timer, name="Button"):
+    def __init__(self, component_state, component_rgb, target, color, timer, triangle_puzzle, name="Button"):
         super().__init__(name, component_state, target)
         # the default value is False/Released
         self._value = False
@@ -369,6 +369,8 @@ class Button(PhaseThread):
         self._color = color
         # we need to know about the timer (7-segment display) to be able to determine correct pushbutton releases in some cases
         self._timer = timer
+        self._triangle_puzzle = triangle_puzzle
+
 
     # runs the thread
     def run(self):
@@ -391,7 +393,7 @@ class Button(PhaseThread):
                     # If wires phase is active and not defused, perform wire-check logic
                     print("[DEBUG] Button pressed and released")
                     
-                    if triangle_puzzle._running:
+                    if self._triangle_puzzle and self._triangle_puzzle._running:
                         triangle_puzzle.lock_in()
                         
                     if toggles._running and isinstance(toggles, RiddleToggles):
