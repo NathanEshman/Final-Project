@@ -40,8 +40,16 @@ class Lcd(Frame):
     def showStartScreen(self, on_start):
         self._start_screen = Frame(self, bg="black")
         self._start_screen.place(relx=0.5, rely=0.5, anchor="center")
+        
+        try:
+            img = Image.open("Start_Mouse.jpeg").resize((1920, 1080))
+            self._start_img = ImageTk.PhotoImage(img)
+            label_img = Label(self._start_screen, image=self._start_img, bg="black")
+            label_img.pack(pady=20)
+        except Exception as e:
+            print(f"[ERROR] Failed to load start image: {e}")
 
-        title = Label(self._start_screen, text="Welcome to Bomb Game", fg="white", bg="black", font=("Courier New", 24))
+        title = Label(self._start_screen, text="Welcome to the Rat Maze", fg="white", bg="black", font=("Courier New", 24))
         title.pack(pady=40)
 
         subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
