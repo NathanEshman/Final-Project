@@ -481,10 +481,9 @@ class Toggles(BaseTogglePhase):
                 _, value_dec = self.read_value()
                 if value_dec == self._target:
                     self._defused = True
-                    self._running = False
                 elif value_dec != 0 and value_dec != self._target:
                     self._failed = True
-                    self._running = False
+                  
             except Exception as e:
                 print(f"[ERROR] Toggles: {e}")
             sleep(0.1)
@@ -498,10 +497,9 @@ class RiddleToggles(BaseTogglePhase):
             try:
                 _, value_dec = self.read_value()
                 print(f"[DEBUG] RiddleToggles = {self._value}/{value_dec} (target = {self._target})")
-
+                print(value_dec == self._target, value_dec,  self._target)
                 if value_dec == self._target:
                     self._defused = True
-                    self._running = False
                     print("[DEBUG] Riddle defused!")
                     if hasattr(gui, "_lriddle"):
                         gui._lriddle.destroy()
