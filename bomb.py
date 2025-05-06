@@ -231,15 +231,15 @@ def start_sequence():
     bootup()
 
     def after_boot():
-        gui.setup()
         if RPi:
             setup_phases()
-            toggles.set_state([0, 1, 0, 0])  # Optional: test config
-            gui.showRiddle()  # ✅ Force initial GUI screen to match phase 0
-            check_phases()
+        gui.setup()  # setup AFTER phases
+        if phase_order[current_phase_index] == "riddle":
+            gui.showRiddle()
+        check_phases()
 
-    # Delay just long enough to finish boot text, then show puzzles
     gui.after(4000, after_boot)
+
 
 
 ##########
