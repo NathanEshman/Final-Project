@@ -510,9 +510,13 @@ class RiddleToggles(BaseTogglePhase):
                         self._failed = True
                         strikes_left -= 1
                         self._gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-                        if strikes_left == 0:
+                        if strikes_left <= 0:
+                            print("[DEBUG] No strikes left — ending game")
                             self._running = False
+                            self._gui.after(1000, self._gui.conclusion, False)
                         else:
+                            self._gui._lriddle_debug["text"] = "Wrong! Try again..."
+                            self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
                             sleep(2)  # cooldown
                             self._failed = False
 
