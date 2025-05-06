@@ -117,8 +117,8 @@ class Lcd(Frame):
 
     def showKeypadPuzzle(self):
         def builder(frame):
-            label = Label(frame, text="Enter the passcode using the keypad:", fg="white", bg="black", font=("Courier New", 16))
-            label.pack()
+            label = Label(frame, text=f"Enter the passcode:\n{passphrase}", fg="white", bg="black", font=("Courier New", 18))
+            label.pack(pady=40)
         self.showPuzzle("keypad", builder)
 
     def showWiresPuzzle(self):
