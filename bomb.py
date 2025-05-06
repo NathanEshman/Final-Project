@@ -232,13 +232,6 @@ def start_sequence():
             show_current_phase()  # ✅ Force initial GUI screen to match phase 0
             check_phases()
 
-
-        if RPi:
-            setup_phases()
-            toggles.set_state([0, 1, 0, 0])  # ✅ Simulate toggles with value = 2
-            check_phases()
-
-
     # Delay just long enough to finish boot text, then show puzzles
     gui.after(4000, after_boot)
 
