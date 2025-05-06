@@ -59,6 +59,11 @@ def setup_phases():
     gui.after(200, show_current_phase)
     
 def show_current_phase():
+    gui.clearPuzzle("riddle")
+    gui.clearPuzzle("keypad")
+    gui.clearPuzzle("wires")
+    gui.clearPuzzle("triangle")
+    
     phase = phase_order[current_phase_index]
     if phase == "riddle":
         gui.showRiddle()
