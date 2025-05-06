@@ -393,10 +393,7 @@ class Button(PhaseThread):
                     
                     if triangle_puzzle._running:
                         triangle_puzzle.lock_in()
-                        
-                    if toggles._running and isinstance(toggles, RiddleToggles):
-                        toggles.evaluate()
-                        
+                           
                     else:
                         if (not self._target or self._target in self._timer._sec):
                             self._defused = True
