@@ -483,11 +483,13 @@ class Toggles(BaseTogglePhase):
 
 
 class RiddleToggles(BaseTogglePhase):
-    def __init__(self, component, target, gui, on_defused, name="RiddleToggles"):
+    def __init__(self, component, target, gui, on_defused, on_strike, name="RiddleToggles"):
         super().__init__(component, target, name)
         self._gui = gui
         self._on_defused = on_defused
+        self._on_strike = on_strike
         self._last_wrong = None
+
     def run(self):
         global gui, strikes_left
         self._running = True
@@ -509,8 +511,7 @@ class RiddleToggles(BaseTogglePhase):
                     if self._last_wrong != value_dec:
                         print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
                         self._failed = True
-                        strikes_left -= 1
-                        self._gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        strikes_left = self._on_strike()
                         self._last_wrong = value_dec
 
                         if strikes_left <= 0:

@@ -15,6 +15,13 @@ current_phase_index = 0
 ###########
 # generates the bootup sequence on the LCD
 
+def handle_riddle_strike():
+    global strikes_left
+    strikes_left -= 1
+    gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+    return strikes_left  # Return updated value for logic checks
+
+
 def advance_phase():
     global current_phase_index
     current_phase_index += 1
@@ -49,7 +56,7 @@ def setup_phases():
     
 
     if RIDDLE_MODE:
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER,gui,advance_phase)
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER,gui,advance_phase,handle_riddle_strike)
     else:
         toggles = Toggles(component_toggles, toggles_target)
 
