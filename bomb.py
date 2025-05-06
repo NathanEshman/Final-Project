@@ -231,14 +231,18 @@ def start_sequence():
     bootup()
 
     def after_boot():
+        gui.setup()  # ✅ Setup GUI widgets first
+
         if RPi:
-            setup_phases()
-        gui.setup()  # setup AFTER phases
-        if phase_order[current_phase_index] == "riddle":
-            gui.showRiddle()
-        check_phases()
+            setup_phases()  # ✅ Start the bomb phase threads
+            toggles.set_state([0, 1, 0, 0])  # Optional: test preset state
+
+        show_current_phase()  # ✅ Show the puzzle corresponding to current_phase_index
+
+        check_phases()  # ✅ Start the monitoring loop for game logic
 
     gui.after(4000, after_boot)
+
 
 
 
