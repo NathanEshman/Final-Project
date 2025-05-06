@@ -84,6 +84,10 @@ def setup_phases():
 
     gui.after(200, show_current_phase)
     
+    if phase_order[current_phase_index] == "riddle":
+        toggles._running = True
+
+    
 def show_current_phase():
     # ✅ Force puzzle switch
     for name in ["riddle", "keypad", "wires", "triangle"]:
