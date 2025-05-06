@@ -496,6 +496,7 @@ class RiddleToggles(BaseTogglePhase):
         while self._running:
             try:
                 _, value_dec = self.read_value()
+                print("Toggle bits:", [int(pin.value) for pin in self._component])
                 print(value_dec == self._target, value_dec,  self._target)
                 if value_dec == self._target:
                     self._defused = True
