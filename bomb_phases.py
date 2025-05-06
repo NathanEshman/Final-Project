@@ -99,17 +99,17 @@ class Lcd(Frame):
             frame.destroy()
 
     def showRiddle(self):
-    def builder(frame):
-        self._lriddle = Label(
-            frame,
-            bg="black",
-            fg="yellow",
-            font=("Courier New", 14),
-            text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship"
-        )
-        self._lriddle.pack()
-    self.showPuzzle("riddle", builder)
-       
+        def builder(frame):
+            self._lriddle = Label(
+                frame,
+                bg="black",
+                fg="yellow",
+                font=("Courier New", 14),
+                text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship"
+            )
+            self._lriddle.pack()
+        self.showPuzzle("riddle", builder)
+           
     def showTrianglePuzzle(self):
         def builder(frame):
             img = Image.open("HOW MANY TRIANGLES.png").resize((1920, 1080))
