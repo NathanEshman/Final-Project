@@ -28,7 +28,9 @@ def advance_phase():
 
     # ✅ Activate the phase you just moved to
     phase = phase_order[current_phase_index]
-    if phase == "keypad":
+    if phase == "riddle":
+        toggles._running = True
+    elif phase == "keypad":
         keypad._running = True
     elif phase == "wires":
         wires._running = True
