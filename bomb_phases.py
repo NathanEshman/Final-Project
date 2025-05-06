@@ -487,6 +487,7 @@ class RiddleToggles(BaseTogglePhase):
         super().__init__(component, target, name)
         self._gui = gui
         self._on_defused = on_defused
+        self._last_wrong = None
     def run(self):
         global gui, strikes_left
         self._running = True
@@ -505,11 +506,13 @@ class RiddleToggles(BaseTogglePhase):
                     self._on_defused()
 
                 elif value_dec != 0 and value_dec != self._target:
-                    if not self._failed:
-                        print("[DEBUG] Incorrect riddle toggles — strike + retry")
+                    if self._last_wrong != value_dec:
+                        print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
                         self._failed = True
                         strikes_left -= 1
                         self._gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        self._last_wrong = value_dec
+
                         if strikes_left <= 0:
                             print("[DEBUG] No strikes left — ending game")
                             self._running = False
@@ -517,8 +520,7 @@ class RiddleToggles(BaseTogglePhase):
                         else:
                             self._gui._lriddle_debug["text"] = "Wrong! Try again..."
                             self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
-                            sleep(2)  # cooldown
-                            self._failed = False
+
 
             except Exception as e:
                 print(f"[ERROR] RiddleToggles: {e}")

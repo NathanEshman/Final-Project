@@ -17,6 +17,10 @@ RIDDLE_MODE = True
 RIDDLE_TOGGLE_ANSWER = 4 
 MATH_MODE = True
 PRIMARY_COLOR_WIRES = [0, 1, 2]  # Red = wire 0, Blue = 1, Yellow = 2
+value_dec == self._target  # int == str ❌ → always false
+value_dec != self._target  # int != str ✅ → always true
+
+
 
 
 # imports
