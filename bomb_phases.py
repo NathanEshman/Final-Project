@@ -499,48 +499,48 @@ class RiddleToggles(BaseTogglePhase):
         self._last_wrong = None
 
     def run(self):
-    global gui, strikes_left
-    self._running = True
-    while self._running:
-        try:
-            # ✅ Don't process anything if already defused
-            if self._defused:
-                sleep(0.2)
-                continue
+        global gui, strikes_left
+        self._running = True
+        while self._running:
+            try:
+                # ✅ Don't process anything if already defused
+                if self._defused:
+                    sleep(0.2)
+                    continue
 
-            _, value_dec = self.read_value()
-            print("Toggle bits:", [int(pin.value) for pin in self._component])
-            print(value_dec == self._target, value_dec,  self._target)
+                _, value_dec = self.read_value()
+                print("Toggle bits:", [int(pin.value) for pin in self._component])
+                print(value_dec == self._target, value_dec,  self._target)
 
-            if value_dec == self._target:
-                self._defused = True
-                print("[DEBUG] Riddle defused!")
-                if hasattr(self._gui, "_lriddle"):
-                    self._gui._lriddle.destroy()
-                if hasattr(self._gui, "showCorrect"):
-                    self._gui.showCorrect()
-                self._on_defused()
+                if value_dec == self._target:
+                    self._defused = True
+                    print("[DEBUG] Riddle defused!")
+                    if hasattr(self._gui, "_lriddle"):
+                        self._gui._lriddle.destroy()
+                    if hasattr(self._gui, "showCorrect"):
+                        self._gui.showCorrect()
+                    self._on_defused()
 
-            elif value_dec != 0 and value_dec != self._target:
-                if self._last_wrong != value_dec:
-                    print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
-                    self._failed = True
-                    strikes_left = self._on_strike()
-                    self._last_wrong = value_dec
+                elif value_dec != 0 and value_dec != self._target:
+                    if self._last_wrong != value_dec:
+                        print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
+                        self._failed = True
+                        strikes_left = self._on_strike()
+                        self._last_wrong = value_dec
 
-                    if strikes_left <= 0:
-                        print("[DEBUG] No strikes left — game over")
-                        self._running = False
-                        self._gui.after(200, self._gui.showGameOver)
-                        sleep(2)
-                        os._exit(0)
+                        if strikes_left <= 0:
+                            print("[DEBUG] No strikes left — game over")
+                            self._running = False
+                            self._gui.after(200, self._gui.showGameOver)
+                            sleep(2)
+                            os._exit(0)
 
-                    else:
-                        self._gui._lriddle_debug["text"] = "Wrong! Try again..."
-                        self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
+                        else:
+                            self._gui._lriddle_debug["text"] = "Wrong! Try again..."
+                            self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
 
-        except Exception as e:
-            print(f"[ERROR] RiddleToggles: {e}")
-        sleep(0.1)
+            except Exception as e:
+                print(f"[ERROR] RiddleToggles: {e}")
+            sleep(0.1)
 
         
