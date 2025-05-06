@@ -527,6 +527,7 @@ class RiddleToggles(BaseTogglePhase):
     def evaluate(self):
         _, value_dec = self.read_value()
         if value_dec == self._target:
+            print("[DEBUG] Inside evaluate():", self._value)
             self._defused = True
             print("[DEBUG] Riddle defused by evaluate()")
             if hasattr(gui, "_lriddle"):
@@ -537,5 +538,6 @@ class RiddleToggles(BaseTogglePhase):
             current_phase_index += 1
             gui.after(200, show_current_phase)
             self._running = False
+            print("[DEBUG] Riddle defused by evaluate()")
         else:
             print("[DEBUG] Incorrect toggles on evaluate()") 
