@@ -226,13 +226,12 @@ def start_sequence():
 
     def after_boot():
         gui.setup()
-        def after_boot():
-            gui.setup()
-            gui.showRiddle()  # ✅ Ensure it always appears when the game starts
-            if RPi:
-                setup_phases()
-                toggles.set_state([0, 1, 0, 0])
-                check_phases()
+        if RPi:
+            setup_phases()
+            toggles.set_state([0, 1, 0, 0])  # Optional: test config
+            show_current_phase()  # ✅ Force initial GUI screen to match phase 0
+            check_phases()
+
 
         if RPi:
             setup_phases()
