@@ -25,7 +25,18 @@ def handle_riddle_strike():
 def advance_phase():
     global current_phase_index
     current_phase_index += 1
+
+    # ✅ Activate the phase you just moved to
+    phase = phase_order[current_phase_index]
+    if phase == "keypad":
+        keypad._running = True
+    elif phase == "wires":
+        wires._running = True
+    elif phase == "triangle":
+        triangle_puzzle._running = True
+
     gui.after(200, show_current_phase)
+
 
 def bootup(n=0):
     if not ANIMATE:
@@ -91,6 +102,8 @@ def show_current_phase():
 def check_phases():
     global active_phases
     
+    if (keypad._running):
+        gui._lkeypad["text"] = f"Combination: {keypad}"
     
     if triangle_puzzle._running:
         gui._lkeypad["text"] = f"Your Count: {keypad._value}"
