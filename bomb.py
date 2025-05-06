@@ -43,7 +43,7 @@ def setup_phases():
     
 
     if RIDDLE_MODE:
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER)
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER,gui)
     else:
         toggles = Toggles(component_toggles, toggles_target)
 
