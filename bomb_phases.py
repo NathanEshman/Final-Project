@@ -29,6 +29,14 @@ class Lcd(Frame):
         self._button = None
         self._puzzle_frames = {}  # Stores active puzzle frames
         self.setupBoot()
+        
+    def showGameOver(self):
+        self.clearPuzzle("riddle")
+        frame = Frame(self, bg="black")
+        frame.grid(row=7, column=0, columnspan=3)
+        label = Label(frame, text="You Lose!", fg="red", bg="black", font=("Courier New", 32))
+        label.pack(pady=100)
+
 
     def showPuzzle(self, name, widget_builder):
         self.clearPuzzle(name)
@@ -515,9 +523,12 @@ class RiddleToggles(BaseTogglePhase):
                         self._last_wrong = value_dec
 
                         if strikes_left <= 0:
-                            print("[DEBUG] No strikes left — ending game")
+                            print("[DEBUG] No strikes left — game over")
                             self._running = False
-                            self._gui.after(1000, self._gui.conclusion, False)
+                            self._gui.after(200, self._gui.showGameOver)
+                            sleep(2)
+                            os._exit(0)
+
                         else:
                             self._gui._lriddle_debug["text"] = "Wrong! Try again..."
                             self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
