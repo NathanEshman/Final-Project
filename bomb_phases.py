@@ -99,11 +99,16 @@ class Lcd(Frame):
             frame.destroy()
 
     def showRiddle(self):
-        def builder(frame):
-            label = Label(frame, bg="black", fg="yellow", font=("Courier New", 14),
-                          text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship")
-            label.pack()
-        self.showPuzzle("riddle", builder)
+    def builder(frame):
+        self._lriddle = Label(
+            frame,
+            bg="black",
+            fg="yellow",
+            font=("Courier New", 14),
+            text="RIDDLE: What did Phineas & Ferb build first?\n1-Time Machine  2-Roller Coaster  3-Robot Dog  4-Spaceship"
+        )
+        self._lriddle.pack()
+    self.showPuzzle("riddle", builder)
        
     def showTrianglePuzzle(self):
         def builder(frame):
@@ -153,6 +158,8 @@ class Lcd(Frame):
         self._ltoggles.grid(row=5, column=0, columnspan=2, sticky=W)
         self._lriddle_debug = Label(self, bg="black", fg="cyan", font=("Courier New", 14), text="")
         self._lriddle_debug.grid(row=6, column=0, columnspan=2, sticky=W)
+        self._lriddle = Label(self, bg="black", fg="yellow", font=("Courier New", 14), text="")
+        self._lriddle.grid(row=6, column=0, columnspan=2, sticky=W)
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
