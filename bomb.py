@@ -14,6 +14,12 @@ current_phase_index = 0
 
 ###########
 # generates the bootup sequence on the LCD
+
+def advance_phase():
+    global current_phase_index
+    current_phase_index += 1
+    gui.after(200, show_current_phase)
+
 def bootup(n=0):
     if not ANIMATE:
         gui._lscroll["text"] = boot_text.replace("\x00", "")
@@ -43,7 +49,7 @@ def setup_phases():
     
 
     if RIDDLE_MODE:
-        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER,gui)
+        toggles = RiddleToggles(component_toggles, RIDDLE_TOGGLE_ANSWER,gui,advance_phase)
     else:
         toggles = Toggles(component_toggles, toggles_target)
 

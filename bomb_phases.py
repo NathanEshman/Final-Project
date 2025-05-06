@@ -483,11 +483,12 @@ class Toggles(BaseTogglePhase):
 
 
 class RiddleToggles(BaseTogglePhase):
-    def __init__(self, component, target, gui, name="RiddleToggles"):
+    def __init__(self, component, target, gui, on_defused, name="RiddleToggles"):
         super().__init__(component, target, name)
-        self._gui = gui  # ✅ Store it as an instance variable
+        self._gui = gui
+        self._on_defused = on_defused
     def run(self):
-        global gui, current_phase_index, strikes_left
+        global gui, strikes_left
         self._running = True
         while self._running:
             try:
@@ -501,8 +502,7 @@ class RiddleToggles(BaseTogglePhase):
                         self._gui._lriddle.destroy()
                     if hasattr(self._gui, "showCorrect"):
                         self._gui.showCorrect()
-                    current_phase_index += 1
-                    self._gui.after(200, show_current_phase)
+                    self._on_defused()
 
                 elif value_dec != 0 and value_dec != self._target:
                     if not self._failed:
