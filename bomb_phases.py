@@ -155,6 +155,13 @@ class Lcd(Frame):
         self._lriddle_debug.grid(row=6, column=0, columnspan=2, sticky=W)
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
+        self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
+        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
+        
+    def showKeypadFeedback(self, message, color="white"):
+        self._lkeypad_feedback.config(text=message, fg=color)
+        self.after(1500, lambda: self._lkeypad_feedback.config(text=""))
+
 
 
 
@@ -397,12 +404,29 @@ class Button(PhaseThread):
                     
                     if triangle_puzzle._running:
                         triangle_puzzle.lock_in()
-                                          
+
+                    elif keypad._running:
+                        print(f"[DEBUG] Checking keypad value: {keypad._value}")
+                        if keypad._value == keypad._target:
+                            keypad._defused = True
+                            keypad._running = False
+                            print("[DEBUG] Keypad solved!")
+                            gui.showKeypadFeedback("Correct!", color="green")  # ✅ show success
+                            gui.clearPuzzle("keypad")
+                        else:
+                            print("[DEBUG] Wrong keypad input — strike")
+                            gui.showKeypadFeedback("Wrong! Try again", color="red")  # ❌ show error
+                            keypad._value = ""  # reset keypad input
+                            strike()
+                            gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+
+
                     else:
                         if (not self._target or self._target in self._timer._sec):
                             self._defused = True
                         else:
                             self._failed = True
+
 
                     if wires._running and not wires._defused:
                         wires.lock_in()
