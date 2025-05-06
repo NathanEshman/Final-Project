@@ -498,18 +498,18 @@ class RiddleToggles(BaseTogglePhase):
                     self._defused = True
                     print("[DEBUG] Riddle defused!")
                     if hasattr(self._gui, "_lriddle"):
-                        gui._lriddle.destroy()
+                        self._gui._lriddle.destroy()
                     if hasattr(self._gui, "showCorrect"):
-                        gui.showCorrect()
+                        self._gui.showCorrect()
                     current_phase_index += 1
-                    gui.after(200, show_current_phase)
+                    self._gui.after(200, show_current_phase)
 
                 elif value_dec != 0 and value_dec != self._target:
                     if not self._failed:
                         print("[DEBUG] Incorrect riddle toggles — strike + retry")
                         self._failed = True
                         strikes_left -= 1
-                        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        self._gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
                         if strikes_left == 0:
                             self._running = False
                         else:
