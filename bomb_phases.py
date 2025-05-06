@@ -483,6 +483,9 @@ class Toggles(BaseTogglePhase):
 
 
 class RiddleToggles(BaseTogglePhase):
+    def __init__(self, component, target, gui, name="RiddleToggles"):
+        super().__init__(component, target, name)
+        self._gui = gui  # ✅ Store it as an instance variable
     def run(self):
         global gui, current_phase_index, strikes_left
         self._running = True
@@ -494,9 +497,9 @@ class RiddleToggles(BaseTogglePhase):
                 if value_dec == self._target:
                     self._defused = True
                     print("[DEBUG] Riddle defused!")
-                    if hasattr(gui, "_lriddle"):
+                    if hasattr(self._gui, "_lriddle"):
                         gui._lriddle.destroy()
-                    if hasattr(gui, "showCorrect"):
+                    if hasattr(self._gui, "showCorrect"):
                         gui.showCorrect()
                     current_phase_index += 1
                     gui.after(200, show_current_phase)
