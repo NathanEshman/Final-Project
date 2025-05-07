@@ -325,24 +325,28 @@ class Keypad(PhaseThread):
                     sleep(0.1)
 
                 if key == "#":
-                    if wires._running:
-                        wires.lock_in()
-                        if wires.is_correct():
-                            wires._defused = True
-                            wires._running = False
-                            from bomb import advance_phase
-                            advance_phase()
-                        else:
-                            from bomb import strike
-                            strike()
+                    from bomb import gui, strike, advance_phase, wires
+
+                    print(f"[DEBUG] Locking in wire state: {wires._value}")
+                    if wires._value == "01010":  # ✅ this is the correct wire pattern
+                        wires._defused = True
+                        wires._running = False
+                        gui.clearPuzzle("wires")
+                        advance_phase()
+                    else:
+                        strike()
+
                 else:
                     self._value += str(key)
 
+            # Keypad answer check for other puzzle (optional)
                 if self._value == self._target:
                     self._defused = True
                 elif self._value != self._target[:len(self._value)]:
                     self._failed = True
+
             sleep(0.1)
+
 
 
     # returns the keypad combination as a string
