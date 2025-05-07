@@ -430,15 +430,10 @@ class Button(PhaseThread):
                 self._pressed = True
             else:
                 if self._pressed:
-                    from bomb import cheese_available, collect_cheese_powerup
-                    if cheese_available:
-                        print("[DEBUG] Collecting cheese...")
-                        collect_cheese_powerup()
-                        self._pressed = False
-                        continue
-                    print("[DEBUG] Button pressed — used only for start screen now")
+                    print("[DEBUG] Button pressed (start screen only)")
                     self._pressed = False
             sleep(0.1)
+
 
 
 
