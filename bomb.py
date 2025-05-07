@@ -28,6 +28,8 @@ def handle_riddle_strike():
 def advance_phase():
     global current_phase_index
     current_phase_index += 1
+    if current_phase_index >= len(phase_order):
+        return  # All phases complete
     phase = phase_order[current_phase_index]
     if phase == "riddle":
         toggles._running = True
@@ -38,6 +40,7 @@ def advance_phase():
     elif phase == "triangle":
         triangle_puzzle._running = True
     gui.after(200, show_current_phase)
+
 
 def setup_phases():
     global timer, keypad, wires, button, toggles, gui
