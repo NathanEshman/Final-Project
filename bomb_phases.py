@@ -108,43 +108,43 @@ class Lcd(Frame):
         self._start_screen = Frame(self, bg="black")
         self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=10, sticky="nsew")
 
-    title = Label(
-        self._start_screen,
-        text="WELCOME TO THE MOUSE MAZE",
-        fg="#ffcc00",
-        bg="black",
-        font=("Courier New", 36)
-    )
-    title.pack(pady=60)
+        title = Label(
+            self._start_screen,
+            text="WELCOME TO THE MOUSE MAZE",
+            fg="#ffcc00",
+            bg="black",
+            font=("Courier New", 36)
+        )
+        title.pack(pady=60)
 
-    names = Label(
-        self._start_screen,
-        text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
-        fg="white",
-        bg="black",
-        font=("Courier New", 20)
-    )
-    names.pack(pady=20)
+        names = Label(
+            self._start_screen,
+            text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
+            fg="white",
+            bg="black",
+            font=("Courier New", 20)
+        )
+        names.pack(pady=20)
 
-    prompt = Label(
-        self._start_screen,
-        text="Press the button to start...",
-        fg="gray",
-        bg="black",
-        font=("Courier New", 18)
-    )
-    prompt.pack(pady=40)
+        prompt = Label(
+            self._start_screen,
+            text="Press the button to start...",
+            fg="gray",
+            bg="black",
+            font=("Courier New", 18)
+        )
+        prompt.pack(pady=40)
 
-    def wait_for_button():
-        if self._button and self._button._component.value:
-            self._start_screen.destroy()
-            self._start_screen = None
-            self._button._enabled_for_game = False  # Disable button after start
-            on_start()
-        else:
-            self.after(100, wait_for_button)
+        def wait_for_button():
+            if self._button and self._button._component.value:
+                self._start_screen.destroy()
+                self._start_screen = None
+                self._button._enabled_for_game = False  # Disable button after start
+                on_start()
+            else:
+                self.after(100, wait_for_button)
 
-    self.after(500, wait_for_button)
+        self.after(500, wait_for_button)
 
 
     def setup(self):
