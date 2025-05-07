@@ -103,50 +103,6 @@ class Lcd(Frame):
         self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
-        
-    def showStartScreen(self, on_start):
-        self._start_screen = Frame(self, bg="black")
-        self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=10, sticky="nsew")
-
-        title = Label(
-            self._start_screen,
-            text="WELCOME TO THE MOUSE MAZE",
-            fg="#ffcc00",
-            bg="black",
-            font=("Courier New", 36)
-        )
-        title.pack(pady=60)
-
-        names = Label(
-            self._start_screen,
-            text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
-            fg="white",
-            bg="black",
-            font=("Courier New", 20)
-        )
-        names.pack(pady=20)
-
-        prompt = Label(
-            self._start_screen,
-            text="Click the button below to start the game",
-            fg="gray",
-            bg="black",
-            font=("Courier New", 18)
-        )
-        prompt.pack(pady=40)
-        
-        start_button = tkinter.Button(
-            self._start_screen,
-            text="START",
-            font=("Courier New", 20),
-            fg="white",
-            bg="green",
-            command=lambda: self.startGame(on_start)
-            )
-
-        start_button.pack(pady=30)
-
-
 
     def setup(self):
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
@@ -166,10 +122,7 @@ class Lcd(Frame):
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
-        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
-        self._ltriangle_status = Label(self, bg="black", fg="white", font=("Courier New", 18), text="")
-        self._ltriangle_status.grid(row=6, column=1, pady=10)
-
+        self._lkeypad_feedback.grid(row=6, column=1, pady=10)     
 
         
     def showKeypadFeedback(self, message, color="white"):
@@ -191,7 +144,7 @@ class Lcd(Frame):
         self._timer = timer
 
     def setButton(self, button):
-        self._ = button
+        self._button = button
 
     def pause(self):
         if RPi:
@@ -225,6 +178,47 @@ class Lcd(Frame):
             for pin in self._button._rgb:
                 pin.value = True
         exit(0)
+        
+    def showStartScreen(self, on_start_callback):
+        self._start_screen = Frame(self, bg="black")
+        self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=9, sticky="nsew")
+
+        title = Label(
+            self._start_screen,
+            text="DEFUSE THE BOMB",
+            font=("Courier New", 48),
+            fg="white",
+            bg="black"
+        )
+        title.pack(pady=80)
+
+        names_label = Label(
+            self._start_screen,
+            text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
+            font=("Courier New", 18),
+            fg="gray",
+            bg="black"
+        )
+        names_label.pack(pady=20)
+
+        instruction_label = Label(
+            self._start_screen,
+            text="Click Start to begin the game",
+            font=("Courier New", 16),
+            fg="white",
+            bg="black"
+        )
+        instruction_label.pack(pady=10)
+
+        start_button = Button(
+            self._start_screen,
+            text="Start",
+            font=("Courier New", 24),
+            fg="black",
+            bg="lime",
+            command=lambda: self.startGame(on_start_callback)
+        )
+        start_button.pack(pady=40)
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
@@ -264,6 +258,7 @@ class Timer(PhaseThread):
             try:
                 if not self._paused:
                     self._update()
+                    print(f"[DEBUG] Timer value = {self._value}")  # Add this
                     self._component.print(str(self))
                     if self._value == 0:
                         print("[DEBUG] Timer hit 0")
@@ -388,7 +383,7 @@ class Wires(PhaseThread):
 
 # the pushbutton phase
 class Button(PhaseThread):
-    def __init__(self, component_state, component_rgb, target, color, timer, triangle_puzzle, name="Button"):
+    def __init__(self, component_state, component_rgb, target, color, timer, name="Button"):
         super().__init__(name, component_state, target)
         self._value = False
         self._pressed = False
@@ -396,8 +391,7 @@ class Button(PhaseThread):
         self._color = color
         self._timer = timer
         self._enabled_for_game = True
-        self._triangle_puzzle = triangle_puzzle
-        
+
     def run(self):
         self._running = True
 
@@ -407,13 +401,10 @@ class Button(PhaseThread):
 
             if self._value and not prev_value:
                 print("[DEBUG] Button pressed")
-                
-                # ✅ Only call triangle logic if active
-                if self._triangle_puzzle._running:
-                    self._triangle_puzzle.press_button()
+                if triangle_puzzle._running:
+                    triangle_puzzle.press_button()
 
             sleep(0.1)
-
 
 
     

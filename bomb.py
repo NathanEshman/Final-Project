@@ -29,8 +29,7 @@ def advance_phase():
     global current_phase_index
     current_phase_index += 1
     if current_phase_index >= len(phase_order):
-        gui.after(200, gui.conclusion, True)
-        return
+        return  # All phases complete
     phase = phase_order[current_phase_index]
     if phase == "riddle":
         toggles._running = True
@@ -42,19 +41,18 @@ def advance_phase():
         triangle_puzzle._running = True
     gui.after(200, show_current_phase)
 
+
 def setup_phases():
-    global timer, keypad, wires, button, toggles, gui, triangle_puzzle
+    global timer, keypad, wires, button, toggles, gui
+    global triangle_puzzle
 
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
 
-    triangle_puzzle = TrianglePuzzle(6, timer, gui)
-    triangle_puzzle.start()
-
     keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
-    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
-
+    triangle_puzzle = TrianglePuzzle(6, timer, keypad)
+    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
     gui.setButton(button)
 
     if RIDDLE_MODE:
@@ -67,8 +65,11 @@ def setup_phases():
     wires.start()
     toggles.start()
     triangle_puzzle.start()
+    
+    
+    for phase in [keypad, wires, triangle_puzzle, toggles]:
+        phase._running = True 
 
-    # Start only the first phase
     first_phase = phase_order[current_phase_index]
     if first_phase == "riddle":
         toggles._running = True
@@ -80,8 +81,6 @@ def setup_phases():
         triangle_puzzle._running = True
 
     gui.after(200, show_current_phase)
-
-
     if phase_order[current_phase_index] == "riddle":
         toggles._running = True
 
@@ -100,8 +99,6 @@ def show_current_phase():
 
 def check_phases():
     global active_phases
-    
-    gui._ltimer["text"] = f"Time left: {timer}" 
 
     if keypad._running or keypad._defused:
         gui._lkeypad["text"] = f"{'DEFUSED' if keypad._defused else f'Input: {keypad._value}'}"
@@ -116,23 +113,16 @@ def check_phases():
             keypad._value = ""
 
     if triangle_puzzle._running:
-        gui._ltriangle_status["text"] = f"Triangle presses: {triangle_puzzle._press_count}/{triangle_puzzle._correct_answer}"
-
+        gui._lkeypad["text"] = f"Your Count: {keypad._value}"
         if triangle_puzzle._defused:
             triangle_puzzle._running = False
             active_phases -= 1
-            gui.clearPuzzle("triangle")
-            advance_phase()
 
-            
     if wires._running:
         gui._lwires["text"] = f"Wires: {wires}"
         if wires._defused:
             wires._running = False
             active_phases -= 1
-            gui.clearPuzzle("wires")
-            advance_phase()  
-            
         elif wires._failed:
             strike()
             wires._failed = False
@@ -187,18 +177,18 @@ def turn_off():
     for pin in button._rgb:
         pin.value = True
 
-def start_sequence():#
-    bootup()
+def start_sequence():
     def after_boot():
         gui.setup()
         if RPi:
             setup_phases()
         show_current_phase()
         check_phases()
-    gui.after(4000, after_boot)
+
+    gui.showStartScreen(after_boot)
 
 ##########
 window = Tk()
 gui = Lcd(window)
-gui.showStartScreen(start_sequence)
+start_sequence()
 window.mainloop()
