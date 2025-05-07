@@ -539,9 +539,9 @@ class RiddleToggles(BaseTogglePhase):
         else:
             value_bin = "".join([str(int(pin.value)) for pin in self._component])
 
+        self._value = value_bin  # ✅ for GUI only — not used in logic
         value_dec = int(value_bin, 2)
         return value_bin, value_dec
-
 
 
     def run(self):
@@ -588,5 +588,3 @@ class RiddleToggles(BaseTogglePhase):
             except Exception as e:
                 print(f"[ERROR] RiddleToggles: {e}")
             sleep(0.1)
-
-        
