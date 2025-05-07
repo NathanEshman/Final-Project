@@ -533,6 +533,17 @@ class RiddleToggles(BaseTogglePhase):
     def set_state(self, bits):
         for pin, val in zip(self._component, bits):
             pin.value = bool(val)
+    
+    def read_value(self):
+        if hasattr(self, "_simulated_bits"):
+            value_bin = "".join([str(int(v)) for v in self._simulated_bits])
+        else:
+            value_bin = "".join([str(int(pin.value)) for pin in self._component])
+
+        value_dec = int(value_bin, 2)
+        return value_bin, value_dec
+
+
 
     def run(self):
         global gui, strikes_left
