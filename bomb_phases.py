@@ -448,7 +448,7 @@ class Button(PhaseThread):
             sleep(0.1)
         
 class TrianglePuzzle(PhaseThread):
-    def __init__(self, correct_answer, timer, name="TrianglePuzzle"):
+    def __init__(self, correct_answer, timer, keypad, name="TrianglePuzzle"):
         super().__init__(name)
         self._correct_answer = str(correct_answer)
         self._input = ""
