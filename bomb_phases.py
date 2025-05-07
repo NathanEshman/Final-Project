@@ -355,16 +355,17 @@ class Button(PhaseThread):
     def run(self):
         self._running = True
 
-    while self._running:
-        prev_value = self._value
-        self._value = self._component.value
+        while self._running:
+            prev_value = self._value
+            self._value = self._component.value
 
-        if self._value and not prev_value:
-            print("[DEBUG] Button pressed")
-            if triangle_puzzle._running:
-                triangle_puzzle.press_button()
+            if self._value and not prev_value:
+                print("[DEBUG] Button pressed")
+                if triangle_puzzle._running:
+                    triangle_puzzle.press_button()
 
-        sleep(0.1)
+            sleep(0.1)
+
 
     
 class TrianglePuzzle(PhaseThread):
