@@ -529,6 +529,10 @@ class RiddleToggles(BaseTogglePhase):
         self._on_defused = on_defused
         self._on_strike = on_strike
         self._last_wrong = None
+        
+    def set_state(self, bits):
+        for pin, val in zip(self._component, bits):
+            pin.value = bool(val)
 
     def run(self):
         global gui, strikes_left
