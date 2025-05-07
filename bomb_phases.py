@@ -292,6 +292,9 @@ class Keypad(PhaseThread):
             except Exception as e:
                 print(f"[ERROR] Keypad crashed: {e}")
             sleep(0.1)
+            
+            def __str__(self):
+                return self._value if self._value else ""
 
 
 
