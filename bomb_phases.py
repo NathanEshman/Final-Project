@@ -406,7 +406,8 @@ class Button(PhaseThread):
 
     # runs the thread
     def run(self):
-        global triangle_puzzle
+        global toggles, triangle_puzzle, keypad, wires
+
         self._running = True
         self._rgb[0].value = False if self._color == "R" else True
         self._rgb[1].value = False if self._color == "G" else True
@@ -416,40 +417,31 @@ class Button(PhaseThread):
             self._value = self._component.value
             if self._value:
                 self._pressed = True
-                
-  # Check for cheese collection
-try:
-    from bomb import cheese_available, collect_cheese_powerup
-    if cheese_available:
-        collect_cheese_powerup()
-        return
-except ImportError:
-    pass  # Avoid crash if circular import
-   
-                
+
+            # ✅ Correctly indented cheese power-up check
+                try:
+                    from bomb import cheese_available, collect_cheese_powerup
+                    if cheese_available:
+                        collect_cheese_powerup()
+                        return
+                except ImportError:
+                    pass
+
             else:
                 if self._pressed:
-                    # If wires phase is active and not defused, perform wire-check logic
                     print("[DEBUG] Button pressed and released")
-                    
-                    if triangle_puzzle._running:
+
+                    if toggles._running and isinstance(toggles, RiddleToggles):
+                        toggles.evaluate()
+
+                    elif triangle_puzzle._running:
                         triangle_puzzle.lock_in()
 
                     elif keypad._running:
-                        print(f"[DEBUG] Checking keypad value: {keypad._value}")
-                        if keypad._value == keypad._target:
-                            keypad._defused = True
-                            keypad._running = False
-                            print("[DEBUG] Keypad solved!")
-                            gui.showKeypadFeedback("Correct!", color="green")  # ✅ show success
-                            gui.clearPuzzle("keypad")
-                        else:
-                            print("[DEBUG] Wrong keypad input — strike")
-                            gui.showKeypadFeedback("Wrong! Try again", color="red")  # ❌ show error
-                            keypad._value = ""  # reset keypad input
-                            strike()
-                            gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+                        keypad.lock_in()
 
+                    elif wires._running:
+                        wires.lock_in()
 
                     else:
                         if (not self._target or self._target in self._timer._sec):
@@ -457,18 +449,10 @@ except ImportError:
                         else:
                             self._failed = True
 
-
-                    if wires._running and not wires._defused:
-                        wires.lock_in()
-                        if wires.is_correct():
-                            wires._defused = True
-                            wires._running = False
-                        else:
-                            self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
-                            print("[DEBUG] Incorrect wires, -5 seconds penalty")
-                    
                     self._pressed = False
+
             sleep(0.1)
+
         
 class TrianglePuzzle(PhaseThread):
     def __init__(self, correct_answer, timer, keypad, name="TrianglePuzzle"):
