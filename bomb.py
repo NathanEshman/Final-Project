@@ -162,7 +162,7 @@ def check_phases():
 
             global cheese_available
             cheese_available = True
-            gui.showCheeseMessage("🧀 Cheese appeared! Press the button to collect.")
+            gui.showCheeseMessage("🧀 Cheese appeared! Press * on the keypad to collect.")
 
 
         elif wires._failed:
@@ -242,7 +242,8 @@ def collect_cheese_powerup():
         cheese_available = False
         timer._value += 5
         gui.showCheeseMessage("Cheese collected! +5 seconds added.")
-        gui.after(2000, advance_phase)  # move to triangle after message
+        gui.after(2000, advance_phase)  # show message briefly, then continue
+
 
 
 

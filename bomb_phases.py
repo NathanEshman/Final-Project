@@ -323,8 +323,16 @@ class Keypad(PhaseThread):
                     except:
                         key = ""
                     sleep(0.1)
+                    
+                    
+                from bomb import cheese_available, collect_cheese_powerup
 
-                if key == "#":
+                if key == "*":
+                    if cheese_available:
+                        print("[DEBUG] Cheese collected via *")
+                        collect_cheese_powerup()
+
+                elif key == "#":
                     from bomb import gui, strike, advance_phase, wires
 
                     print(f"[DEBUG] Locking in wire state: {wires._value}")
