@@ -243,9 +243,6 @@ def start_sequence():
 
     gui.after(4000, after_boot)
 
-
-
-
 ##########
 # GUI Setup
 ##########
