@@ -334,3 +334,4 @@ class Keypad(PhaseThread):
                         wires._defused = True
                         wires._running = False
                         gui.clearPuzzle("wires")
+
