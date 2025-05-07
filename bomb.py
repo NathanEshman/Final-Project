@@ -152,15 +152,17 @@ def check_phases():
     # check the wires
     if (wires._running):
         gui._lwires["text"] = f"Wires: {wires}"
-    
-        if (wires._defused):
-            wires._running = False
-            active_phases -= 1
-            activate_cheese_powerup()
 
-        elif (wires._failed):
+        if wires._value == "10101":
+            wires._defused = True
+            wires._running = False
+            gui.clearPuzzle("wires")
+            advance_phase()
+
+        elif wires._failed:
             strike()
             wires._failed = False
+
 
     # check the button
     if (button._running):
