@@ -27,9 +27,24 @@ class Lcd(Frame):
         window.attributes("-fullscreen", True)
         self._timer = None
         self._button = None
-        self._puzzle_frames = {}
-        self.setupBoot()        
+        self._puzzle_frames = {}  # Stores active puzzle frames
+        self.setupBoot()
         
+    def showGameOver(self):
+        self.clearPuzzle("riddle")
+        frame = Frame(self, bg="black")
+        frame.grid(row=7, column=0, columnspan=3)
+        label = Label(frame, text="You Lose!", fg="red", bg="black", font=("Courier New", 32))
+        label.pack(pady=100)
+
+
+    def showPuzzle(self, name, widget_builder):
+        self.clearPuzzle(name)
+        frame = Frame(self, bg="black")
+        self._puzzle_frames[name] = frame
+        frame.grid(row=7, column=0, columnspan=3)
+        widget_builder(frame)   
+
     def startGame(self, on_start):
         if self._start_screen:
             self._start_screen.destroy()
