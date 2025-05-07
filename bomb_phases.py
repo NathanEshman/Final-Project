@@ -217,7 +217,6 @@ class Timer(PhaseThread):
             try:
                 if not self._paused:
                     self._update()
-                    print(f"[DEBUG] Timer value = {self._value}")  # Add this
                     self._component.print(str(self))
                     if self._value == 0:
                         print("[DEBUG] Timer hit 0")
