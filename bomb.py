@@ -89,6 +89,8 @@ def check_phases():
         if keypad._defused:
             keypad._running = False
             active_phases -= 1
+            gui.clearPuzzle("keypad")
+            advance_phase()
         elif keypad._failed:
             strike()
             keypad._failed = False
