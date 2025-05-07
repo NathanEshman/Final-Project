@@ -128,23 +128,23 @@ class Lcd(Frame):
 
         prompt = Label(
             self._start_screen,
-            text="Press the button to start...",
+            text="Click the button below to start the game",
             fg="gray",
             bg="black",
             font=("Courier New", 18)
         )
         prompt.pack(pady=40)
 
-        def wait_for_button():
-            if self._button and self._button._component.value:
-                self._start_screen.destroy()
-                self._start_screen = None
-                self._button._enabled_for_game = False  # Disable button after start
-                on_start()
-            else:
-                self.after(100, wait_for_button)
+        start_button = Button(
+            self._start_screen,
+            text="START",
+            font=("Courier New", 20),
+            fg="white",
+            bg="green",
+            command=lambda: self.startGame(on_start)
+        )
+        start_button.pack(pady=30)
 
-        self.after(500, wait_for_button)
 
 
     def setup(self):
