@@ -353,7 +353,7 @@ class Button(PhaseThread):
         self._enabled_for_game = True
 
     def run(self):
-    self._running = True
+        self._running = True
 
     while self._running:
         prev_value = self._value
