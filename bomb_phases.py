@@ -105,8 +105,8 @@ class Lcd(Frame):
         self.pack(fill=BOTH, expand=True)
         
     def showStartScreen(self, on_start):
-    self._start_screen = Frame(self, bg="black")
-    self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=10, sticky="nsew")
+        self._start_screen = Frame(self, bg="black")
+        self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=10, sticky="nsew")
 
     title = Label(
         self._start_screen,
