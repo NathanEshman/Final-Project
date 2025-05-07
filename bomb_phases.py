@@ -261,33 +261,38 @@ class Keypad(PhaseThread):
 
     def run(self):
         self._running = True
+        seen_keys = set()
         while self._running:
-            if self._component.pressed_keys:
-                while self._component.pressed_keys:
-                    try:
-                        key = self._component.pressed_keys[0]
+            try:
+                keys = self._component.pressed_keys
+                if keys:
+                    key = keys[0]
+                    if key not in seen_keys:
+                        seen_keys.add(key)
                         print(f"[DEBUG] Key pressed: {key}")
-                    except:
-                        key = ""
-                    sleep(0.1)
+                        self._value += str(key)
+                        
+                        if self._value == self._target:
+                            self._defused = True
+                            from bomb import gui
+                            gui.showKeypadFeedback("Correct!", "green")
+                            gui.clearPuzzle("keypad")
+                            return
 
-                self._value += str(key)
+                        elif not self._target.startswith(self._value):
+                            self._failed = True
+                            from bomb import gui
+                            gui.showKeypadFeedback("Incorrect!", "red")
+                            self._value = ""
+                            seen_keys.clear()
 
-                if str(key) == self._target:
-                    self._defused = True
-                    from bomb import gui
-                    gui.clearPuzzle("keypad")
-                    return
+                else:
+                    seen_keys.clear()
 
-                elif self._value != self._target[0:len(self._value)]:
-                    self._failed = True
+            except Exception as e:
+                print(f"[ERROR] Keypad crashed: {e}")
             sleep(0.1)
 
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        else:
-            return self._value
 
 
 # the jumper wires phase
