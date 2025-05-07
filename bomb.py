@@ -17,6 +17,8 @@ cheese_available = False
 cheese_collected = False
 cheese_timer_id = None
 
+
+
 ###########
 # generates the bootup sequence on the LCD
 def handle_riddle_strike():
@@ -157,7 +159,11 @@ def check_phases():
             wires._defused = True
             wires._running = False
             gui.clearPuzzle("wires")
-            advance_phase()
+
+            global cheese_available
+            cheese_available = True
+            gui.showCheeseMessage("🧀 Cheese appeared! Press the button to collect.")
+
 
         elif wires._failed:
             strike()
@@ -228,7 +234,7 @@ def deactivate_cheese_powerup():
     global cheese_available
     cheese_available = False
     gui.showCheeseMessage("Cheese disappeared.")
-
+    
 def collect_cheese_powerup():
     global cheese_available, cheese_collected
     if cheese_available and not cheese_collected:
@@ -236,6 +242,8 @@ def collect_cheese_powerup():
         cheese_available = False
         timer._value += 5
         gui.showCheeseMessage("Cheese collected! +5 seconds added.")
+        gui.after(2000, advance_phase)  # move to triangle after message
+
 
 
 
