@@ -273,6 +273,9 @@ class Keypad(PhaseThread):
                     sleep(0.1)
 
                 self._value += str(key)
+                if hasattr(gui, "_lkeypad"):
+                    gui._lkeypad["text"] = f"Input: {self._value}"
+
                 print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
 
                 if self._value == self._target:

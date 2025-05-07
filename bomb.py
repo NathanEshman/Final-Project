@@ -98,7 +98,7 @@ def check_phases():
     global active_phases
 
     if keypad._running or keypad._defused:
-        gui._lkeypad["text"] = f"Combination: {str(keypad)}"
+        gui._lkeypad["text"] = f"Input: {keypad._value}"
         if keypad._defused:
             keypad._running = False
             active_phases -= 1
