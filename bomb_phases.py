@@ -262,9 +262,12 @@ class Keypad(PhaseThread):
 
     def run(self):
         self._running = True
-        while self._running:
+        while True:
+            if not self._running:
+                sleep(0.1)
+                continue
+
             if self._component.pressed_keys:
-                # Debounce
                 while self._component.pressed_keys:
                     try:
                         key = self._component.pressed_keys[0]
@@ -273,27 +276,23 @@ class Keypad(PhaseThread):
                     sleep(0.1)
 
                 self._value += str(key)
-                if hasattr(gui, "_lkeypad"):
-                    gui._lkeypad["text"] = f"Input: {self._value}"
-
                 print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
 
                 if self._value == self._target:
                     self._defused = True
                     print("[DEBUG] Keypad defused!")
+
                 elif self._value != self._target[0:len(self._value)]:
                     self._failed = True
                     print("[DEBUG] Incorrect keypad input, resetting...")
+                    self._value = ""  # reset on wrong input
+
             sleep(0.1)
 
     def __str__(self):
         if self._defused:
             return "DEFUSED"
         return self._value if self._value else ""
-
-
-
-
 
 # the jumper wires phase
 class Wires(PhaseThread):
