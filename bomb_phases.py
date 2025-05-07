@@ -1,3 +1,4 @@
+@ -1,334 +1,334 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # GUI and Phase class definitions
@@ -43,13 +44,55 @@ class Lcd(Frame):
         frame = Frame(self, bg="black")
         self._puzzle_frames[name] = frame
         frame.grid(row=7, column=0, columnspan=3)
-        widget_builder(frame)   
+        widget_builder(frame)
+        
+    def showStartScreen(self, on_start):
+        self._start_screen = Frame(self, bg="black")
+        self._start_screen.place(relx=0.5, rely=0.5, anchor="center")
+        
+        try:
+            img = Image.open("Start_Mouse.jpeg").resize((1920, 1080))
+            self._start_img = ImageTk.PhotoImage(img)
+            label_img = Label(self._start_screen, image=self._start_img, bg="black")
+            label_img.pack(pady=20)
+        except Exception as e:
+            print(f"[ERROR] Failed to load start image: {e}")
 
+        title = Label(self._start_screen, text="Welcome to the Rat Maze", fg="white", bg="black", font=("Courier New", 24))
+        title.pack(pady=40)
+
+        subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
+        subtitle.pack(pady=20)
+        
+        press_label = Label(self._start_screen, text="Press the physical button to begin", fg="white", bg="black", font=("Courier New", 18))
+        press_label.pack(pady=40)
+
+        # Start polling for hardware button press
+        self.after(100, lambda: self.wait_for_physical_start(on_start))
+    
+    def wait_for_physical_start(self, on_start):
+        if self._button is None:
+            print("[DEBUG] Waiting for button to be set...")
+            self.after(100, lambda: self.wait_for_physical_start(on_start))
+            return
+
+        if self._button._component.value:
+            print("[DEBUG] Button pressed — starting game.")
+            self._start_screen.destroy()
+            self._start_screen = None
+            on_start()
+        else:
+            self.after(100, lambda: self.wait_for_physical_start(on_start))
+
+
+        
     def startGame(self, on_start):
         if self._start_screen:
             self._start_screen.destroy()
             self._start_screen = None
         on_start()
+
+
 
     def clearPuzzle(self, name):
         frame = self._puzzle_frames.pop(name, None)
@@ -86,7 +129,7 @@ class Lcd(Frame):
 
     def showWiresPuzzle(self):
         def builder(frame):
-            label = Label(frame, text="Unplug the PRIMARY COLOR wires (Red, Blue, Yellow).", fg="white", bg="black", font=("Courier New", 16))
+            label = Label(frame, text="Unplug the PRIMARY COLOR wires (Red, Blue, Yellow)\nThen press the button to lock in.", fg="white", bg="black", font=("Courier New", 16))
             label.pack()
         self.showPuzzle("wires", builder)
 
@@ -105,6 +148,7 @@ class Lcd(Frame):
         self.pack(fill=BOTH, expand=True)
 
     def setup(self):
+        # create empty placeholder labels (will be used selectively)
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
         self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
@@ -122,12 +166,25 @@ class Lcd(Frame):
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
+<<<<<<< HEAD
         self._lkeypad_feedback.grid(row=6, column=1, pady=10)     
+=======
+        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
+        self._lcheese = Label(self, bg="black", fg="orange", font=("Courier New", 16), text="")
+        self._lcheese.grid(row=9, column=0, columnspan=3)
+        
+    def showCheeseMessage(self, message):
+        self._lcheese.config(text=message)
+        self.after(3000, lambda: self._lcheese.config(text=""))
+>>>>>>> 03394627024b05ae0e4c009ed49a901c83188fc9
 
         
     def showKeypadFeedback(self, message, color="white"):
         self._lkeypad_feedback.config(text=message, fg=color)
         self.after(1500, lambda: self._lkeypad_feedback.config(text=""))
+
+
+
 
         if SHOW_BUTTONS:
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
@@ -254,19 +311,16 @@ class Timer(PhaseThread):
 
 
 # the keypad phase
-
 class Keypad(PhaseThread):
     def __init__(self, component, target, name="Keypad"):
         super().__init__(name, component, target)
+        # the default value is an empty string
         self._value = ""
 
+    # runs the thread
     def run(self):
         self._running = True
-        while True:
-            if not self._running:
-                sleep(0.1)
-                continue
-
+        while self._running:
             if self._component.pressed_keys:
                 while self._component.pressed_keys:
                     try:
@@ -275,238 +329,13 @@ class Keypad(PhaseThread):
                         key = ""
                     sleep(0.1)
 
-                self._value += str(key)
-                print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
+                if key == "#":
+                    from bomb import gui, strike, advance_phase, wires
 
-                if self._value == self._target:
-                    self._defused = True
-                    print("[DEBUG] Keypad defused!")
+                    print(f"[DEBUG] Locking in wire state: {wires._value}")
+                    if wires._value == "01010":  # ✅ this is the correct wire pattern
+                    if wires._value == "10101":  # ✅ this is the correct wire pattern
+                        wires._defused = True
+                        wires._running = False
+                        gui.clearPuzzle("wires")
 
-                elif self._value != self._target[0:len(self._value)]:
-                    self._failed = True
-                    print("[DEBUG] Incorrect keypad input, resetting...")
-                    self._value = ""  # reset on wrong input
-
-            sleep(0.1)
-
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        return self._value if self._value else ""
-
-# the jumper wires phase
-class Wires(PhaseThread):
-    def __init__(self, component, target, name="Wires"):
-        super().__init__(name, component, target)
-        self._locked_in = False  # 🆕 New flag
-
-    def lock_in(self):
-        self._locked_in = True
-
-    def is_correct(self):
-        # Read current unplugged state and check if the unplugged wires match the primary color wires
-        value_bin = "".join([str(int(pin.value)) for pin in self._component])
-        value_dec = int(value_bin, 2)
-        expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
-        return value_dec == expected_value
-
-
-    def run(self):
-        self._running = True
-        while self._running:
-            try:
-                value_bin = "".join([str(int(pin.value)) for pin in self._component])
-                self._value = value_bin
-                # No need to auto-fail — we only evaluate when button is pressed
-                if self._locked_in:
-                    value_dec = int(value_bin, 2)
-                    expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
-                    if value_dec == expected_value:
-                        self._defused = True
-                        self._running = False
-                    # Reset lock after checking
-                    self._locked_in = False
-            except Exception as e:
-                print(f"[ERROR] Wires phase: {e}")
-            sleep(0.1)
-
-
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        if self._value is None:
-            return "WAITING"
-        return f"{self._value}/{int(self._value, 2)}"
-
-
-
-# the pushbutton phase
-class Button(PhaseThread):
-    def __init__(self, component_state, component_rgb, target, color, timer, name="Button"):
-        super().__init__(name, component_state, target)
-        self._value = False
-        self._pressed = False
-        self._rgb = component_rgb
-        self._color = color
-        self._timer = timer
-        self._enabled_for_game = True
-
-    def run(self):
-        self._running = True
-
-        while self._running:
-            prev_value = self._value
-            self._value = self._component.value
-
-            if self._value and not prev_value:
-                print("[DEBUG] Button pressed")
-                if triangle_puzzle._running:
-                    triangle_puzzle.press_button()
-
-            sleep(0.1)
-
-
-    
-class TrianglePuzzle(PhaseThread):
-    def __init__(self, correct_answer, timer, gui, name="TrianglePuzzle"):
-        super().__init__(name)
-        self._press_count = 0
-        self._correct_answer = correct_answer
-        self._timer = timer
-        self._gui = gui  # ✅ store gui reference
-
-    def run(self):
-        self._running = True
-        self._press_count = 0
-        if hasattr(self._gui, "_ltriangle_status"):
-            self._gui._ltriangle_status.config(
-                text=f"Pressed: {self._press_count}/{self._correct_answer}"
-            )
-
-    def press_button(self):
-        if not self._running:
-            return
-
-        self._press_count += 1
-        print(f"[DEBUG] Triangle button presses: {self._press_count}")
-
-        if hasattr(self._gui, "_ltriangle_status"):
-            self._gui._ltriangle_status.config(
-                text=f"Pressed: {self._press_count}/{self._correct_answer}"
-            )
-
-        if self._press_count >= self._correct_answer:
-            self._defused = True
-            self._running = False
-            print("[DEBUG] Triangle Puzzle solved!")
-
-            
-class BaseTogglePhase(Thread):
-    def __init__(self, component, target, name="BaseToggle"):
-        super().__init__(name=name, daemon=True)
-        self._component = component
-        self._target = target
-        self._value = None
-        self._defused = False
-        self._failed = False
-        self._running = False
-
-    def read_value(self):
-        value_bin = "".join([str(int(pin.value)) for pin in self._component])
-        self._value = value_bin
-        value_dec = int(value_bin, 2)
-        return value_bin, value_dec
-
-    def __str__(self):
-        if self._defused:
-            return "DEFUSED"
-        if self._value is None:
-            return "WAITING"
-        return f"{self._value}/{int(self._value, 2)}"
-
-# the toggle switches phase
-class Toggles(BaseTogglePhase):
-    def run(self):
-        self._running = True
-        while self._running:
-            try:
-                _, value_dec = self.read_value()
-                if value_dec == self._target:
-                    self._defused = True
-                elif value_dec != 0 and value_dec != self._target:
-                    self._failed = True
-                  
-            except Exception as e:
-                print(f"[ERROR] Toggles: {e}")
-            sleep(0.1)
-
-
-class RiddleToggles(BaseTogglePhase):
-    def __init__(self, component, target, gui, on_defused, on_strike, name="RiddleToggles"):
-        super().__init__(component, target, name)
-        self._gui = gui
-        self._on_defused = on_defused
-        self._on_strike = on_strike
-        self._last_wrong = None
-        
-    def set_state(self, bits):
-        for pin, val in zip(self._component, bits):
-            pin.value = bool(val)
-    
-    def read_value(self):
-        if hasattr(self, "_simulated_bits"):
-            value_bin = "".join([str(int(v)) for v in self._simulated_bits])
-        else:
-            value_bin = "".join([str(int(pin.value)) for pin in self._component])
-
-        value_dec = int(value_bin, 2)
-        return value_bin, value_dec
-
-
-
-    def run(self):
-        global gui, strikes_left
-        self._running = True
-        while self._running:
-            try:
-                # ✅ Don't process anything if already defused
-                if self._defused:
-                    sleep(0.2)
-                    continue
-
-                _, value_dec = self.read_value()
-                print("Toggle bits:", [int(pin.value) for pin in self._component])
-                print(value_dec == self._target, value_dec,  self._target)
-
-                if value_dec == self._target:
-                    self._defused = True
-                    print("[DEBUG] Riddle defused!")
-                    if hasattr(self._gui, "_lriddle"):
-                        self._gui._lriddle.destroy()
-                    if hasattr(self._gui, "showCorrect"):
-                        self._gui.showCorrect()
-                    self._on_defused()
-
-                elif value_dec != 0 and value_dec != self._target:
-                    if self._last_wrong != value_dec:
-                        print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
-                        strikes_left = self._on_strike()  # ✅ Strike handled here only
-                        self._last_wrong = value_dec
-
-
-                        if strikes_left <= 0:
-                            print("[DEBUG] No strikes left — game over")
-                            self._running = False
-                            self._gui.after(200, self._gui.showGameOver)
-                            sleep(2)
-                            os._exit(0)
-
-                        else:
-                            self._gui._lriddle_debug["text"] = "Wrong! Try again..."
-                            self._gui.after(1500, lambda: self._gui._lriddle_debug.config(text=""))
-
-            except Exception as e:
-                print(f"[ERROR] RiddleToggles: {e}")
-            sleep(0.1)
-
-        
