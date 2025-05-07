@@ -531,8 +531,7 @@ class RiddleToggles(BaseTogglePhase):
         self._last_wrong = None
         
     def set_state(self, bits):
-        for pin, val in zip(self._component, bits):
-            pin.value = bool(val)
+        self._simulated_bits = bits
     
     def read_value(self):
         if hasattr(self, "_simulated_bits"):
