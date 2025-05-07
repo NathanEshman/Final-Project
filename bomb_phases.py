@@ -77,9 +77,11 @@ class Lcd(Frame):
 
         if self._button._component.value:
             print("[DEBUG] Button pressed — starting game.")
+            self._button._enabled_for_game = False  # ✅ Disable button logic after start
             self._start_screen.destroy()
             self._start_screen = None
             on_start()
+
         else:
             self.after(100, lambda: self.wait_for_physical_start(on_start))
 
@@ -403,6 +405,8 @@ class Button(PhaseThread):
         self._color = color
         # we need to know about the timer (7-segment display) to be able to determine correct pushbutton releases in some cases
         self._timer = timer
+        self._enabled_for_game = True  # ✅ Default: button works for game logic
+
 
     # runs the thread
     def run(self):
@@ -414,27 +418,33 @@ class Button(PhaseThread):
 
         while self._running:
             self._value = self._component.value
+
+        # ✅ Only allow button usage during start screen
+            if not self._enabled_for_game:
+                sleep(0.1)
+                continue
+
             if self._value:
                 self._pressed = True
 
-            # ✅ Correctly indented cheese check
+            # Cheese power-up (only relevant during start)
                 try:
                     from bomb import cheese_available, collect_cheese_powerup
                     if cheese_available:
                         collect_cheese_powerup()
                         return
                 except ImportError:
-                    pass  # Avoid crash if circular import
+                    pass
 
             else:
                 if self._pressed:
                     print("[DEBUG] Button pressed and released")
 
-                # Triangle puzzle lock-in
+                # Triangle puzzle
                     if triangle_puzzle._running:
                         triangle_puzzle.lock_in()
 
-                # Keypad check
+                # Keypad puzzle
                     elif keypad._running:
                         print(f"[DEBUG] Checking keypad value: {keypad._value}")
                         if keypad._value == keypad._target:
@@ -450,7 +460,7 @@ class Button(PhaseThread):
                             strike()
                             gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
 
-                # Wire check
+                # Wires puzzle
                     elif wires._running and not wires._defused:
                         wires.lock_in()
                         if wires.is_correct():
@@ -460,7 +470,7 @@ class Button(PhaseThread):
                             self._timer._value = max(0, self._timer._value - 5)
                             print("[DEBUG] Incorrect wires, -5 seconds penalty")
 
-                # Button puzzle logic
+                # Button puzzle (last resort)
                     else:
                         if not self._target or self._target in self._timer._sec:
                             self._defused = True
@@ -470,6 +480,7 @@ class Button(PhaseThread):
                     self._pressed = False
 
             sleep(0.1)
+
 
         
 class TrianglePuzzle(PhaseThread):
