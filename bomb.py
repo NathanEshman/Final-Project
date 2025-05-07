@@ -174,7 +174,7 @@ def turn_off():
     for pin in button._rgb:
         pin.value = True
 
-def start_sequence():,
+def start_sequence():
     bootup()
     def after_boot():
         gui.setup()
