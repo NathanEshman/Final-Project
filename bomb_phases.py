@@ -316,29 +316,29 @@ class Keypad(PhaseThread):
 
     # runs the thread
     def run(self):
-    self._running = True
-    while self._running:
-        if self._component.pressed_keys:
-            while self._component.pressed_keys:
-                try:
-                    key = self._component.pressed_keys[0]
-                except:
-                    key = ""
-                sleep(0.1)
-            self._value += str(key)
+        self._running = True
+        while self._running:
+            if self._component.pressed_keys:
+                while self._component.pressed_keys:
+                    try:
+                        key = self._component.pressed_keys[0]
+                    except:
+                        key = ""
+                    sleep(0.1)
+                self._value += str(key)
 
-            # ⛏ FAST DEFUSE — if one key matches target
-            if str(key) == self._target:
-                self._defused = True
-                self._running = False
-                from bomb import advance_phase, gui
-                gui.clearPuzzle("keypad")
-                gui.showKeypadFeedback("Correct!", color="green")
-                advance_phase()
+                # ⛏ FAST DEFUSE — if one key matches target
+                if str(key) == self._target:
+                    self._defused = True
+                    self._running = False
+                    from bomb import advance_phase, gui
+                    gui.clearPuzzle("keypad")
+                    gui.showKeypadFeedback("Correct!", color="green")
+                    advance_phase()
 
-            elif self._value != self._target[0:len(self._value)]:
-                self._failed = True
-        sleep(0.1)
+                elif self._value != self._target[0:len(self._value)]:
+                    self._failed = True
+            sleep(0.1)
 
     # returns the keypad combination as a string
     def __str__(self):
