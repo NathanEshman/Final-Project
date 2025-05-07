@@ -453,12 +453,13 @@ class TrianglePuzzle(PhaseThread):
         self._correct_answer = str(correct_answer)
         self._input = ""
         self._timer = timer
-
+        self._keypad = keypad
+        
     def run(self):
         self._running = True
         while self._running:
-            if keypad._value:
-                self._input = keypad._value
+            if self._keypad._value:
+                self._input = self._keypad._value
             sleep(0.1)
 
     def lock_in(self):
