@@ -97,8 +97,8 @@ def show_current_phase():
 def check_phases():
     global active_phases
 
-    if keypad._running:
-        gui._lkeypad["text"] = f"Combination: {keypad}"
+    if keypad._running or keypad._defused:
+        gui._lkeypad["text"] = f"Combination: {str(keypad)}"
         if keypad._defused:
             keypad._running = False
             active_phases -= 1

@@ -276,7 +276,6 @@ class Keypad(PhaseThread):
                     self._defused = True
                     from bomb import gui
                     gui.clearPuzzle("keypad")
-                    gui.showKeypadFeedback("Correct!", color="green")
                     return
 
                 elif self._value != self._target[0:len(self._value)]:
