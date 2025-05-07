@@ -266,6 +266,7 @@ class Keypad(PhaseThread):
                 while self._component.pressed_keys:
                     try:
                         key = self._component.pressed_keys[0]
+                        print(f"[DEBUG] Key pressed: {key}")
                     except:
                         key = ""
                     sleep(0.1)
