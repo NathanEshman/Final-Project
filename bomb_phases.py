@@ -259,7 +259,7 @@ class Keypad(PhaseThread):
         super().__init__(name, component, target)
         self._value = ""
 
-    def run(self):
+        def run(self):
         self._running = True
         seen_keys = set()
         while self._running:
@@ -270,12 +270,16 @@ class Keypad(PhaseThread):
                     seen_keys.add(key)
                     self._value += str(key)
 
+                    # <-- new: immediately update the GUI -->
+                    from bomb import gui
+                    gui._lkeypad.config(text=f"Combination: {self._value}")
+
                     if self._value == self._target:
                         self._defused = True
-                        from bomb import gui
                         gui.showKeypadFeedback("Correct!", "green")
                         gui.clearPuzzle("keypad")
                         return
+                    # … rest of your logic …
 
                     elif not self._target.startswith(self._value):
                         self._failed = True
