@@ -531,7 +531,8 @@ class RiddleToggles(BaseTogglePhase):
         self._last_wrong = None
         
     def set_state(self, bits):
-        self._simulated_bits = bits
+        for pin, val in zip(self._component, bits):
+            pin.value = bool(val)
     
     def read_value(self):
         if hasattr(self, "_simulated_bits"):
@@ -539,9 +540,9 @@ class RiddleToggles(BaseTogglePhase):
         else:
             value_bin = "".join([str(int(pin.value)) for pin in self._component])
 
-        self._value = value_bin  # ✅ for GUI only — not used in logic
         value_dec = int(value_bin, 2)
         return value_bin, value_dec
+
 
 
     def run(self):
@@ -588,3 +589,5 @@ class RiddleToggles(BaseTogglePhase):
             except Exception as e:
                 print(f"[ERROR] RiddleToggles: {e}")
             sleep(0.1)
+
+        
