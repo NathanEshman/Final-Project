@@ -201,6 +201,15 @@ class Lcd(Frame):
         )
         names_label.pack(pady=20)
 
+        instruction_label = Label(
+            self._start_screen,
+            text="Click Start to begin the game",
+            font=("Courier New", 16),
+            fg="white",
+            bg="black"
+        )
+        instruction_label.pack(pady=10)
+
         start_button = Button(
             self._start_screen,
             text="Start",
