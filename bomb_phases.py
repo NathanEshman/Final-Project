@@ -406,8 +406,6 @@ class Button(PhaseThread):
 
     # runs the thread
     def run(self):
-        global toggles, triangle_puzzle, keypad, wires
-
         self._running = True
         self._rgb[0].value = False if self._color == "R" else True
         self._rgb[1].value = False if self._color == "G" else True
@@ -417,41 +415,12 @@ class Button(PhaseThread):
             self._value = self._component.value
             if self._value:
                 self._pressed = True
-
-            # ✅ Correctly indented cheese power-up check
-                try:
-                    from bomb import cheese_available, collect_cheese_powerup
-                    if cheese_available:
-                        collect_cheese_powerup()
-                        return
-                except ImportError:
-                    pass
-
             else:
                 if self._pressed:
-                    print("[DEBUG] Button pressed and released")
-
-                    if toggles._running and isinstance(toggles, RiddleToggles):
-                        toggles.evaluate()
-
-                    elif triangle_puzzle._running:
-                        triangle_puzzle.lock_in()
-
-                    elif keypad._running:
-                        keypad.lock_in()
-
-                    elif wires._running:
-                        wires.lock_in()
-
-                    else:
-                        if (not self._target or self._target in self._timer._sec):
-                            self._defused = True
-                        else:
-                            self._failed = True
-
+                    print("[DEBUG] Button pressed — used only for start screen now")
                     self._pressed = False
-
             sleep(0.1)
+
 
         
 class TrianglePuzzle(PhaseThread):
