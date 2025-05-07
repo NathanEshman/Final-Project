@@ -304,17 +304,9 @@ class Timer(PhaseThread):
 class Keypad(PhaseThread):
     def __init__(self, component, target, name="Keypad"):
         super().__init__(name, component, target)
-        # the default value is an empty string
         self._value = ""
 
-    # runs the thread
-    # patch in bomb_phases.py
-# inside class Keypad(PhaseThread):
-
-# patch in bomb_phases.py
-# inside class Keypad(PhaseThread):
-
-def run(self):
+    def run(self):
         self._running = True
         while self._running:
             if self._component.pressed_keys:
@@ -324,6 +316,7 @@ def run(self):
                     except:
                         key = ""
                     sleep(0.1)
+
                 self._value += str(key)
 
                 if str(key) == self._target:
