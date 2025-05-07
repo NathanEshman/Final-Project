@@ -148,6 +148,8 @@ class Lcd(Frame):
 
     def setup(self):
         # create empty placeholder labels (will be used selectively)
+        self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
+        self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
         self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
         self._lkeypad.grid(row=2, column=0, columnspan=3, sticky=W)
         self._lwires = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
