@@ -149,20 +149,17 @@ def check_phases():
             keypad._value = ""
     # check the wires
     if (wires._running):
-        # update the GUI
         gui._lwires["text"] = f"Wires: {wires}"
-        # the phase is defused -> stop the thread
-        
-    if (wires._defused):
-        wires._running = False
-        active_phases -= 1
-        activate_cheese_powerup()
+    
+        if (wires._defused):
+            wires._running = False
+            active_phases -= 1
+            activate_cheese_powerup()
 
-        # the phase has failed -> strike
         elif (wires._failed):
             strike()
-            # reset the wires
             wires._failed = False
+
     # check the button
     if (button._running):
         # update the GUI
