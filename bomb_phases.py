@@ -291,7 +291,10 @@ class Timer(PhaseThread):
 
     # returns the timer as a string (mm:ss)
     def __str__(self):
+        if not self._min or not self._sec:
+            self._update()
         return f"{self._min}:{self._sec}"
+
 
 # the keypad phase
 class Keypad(PhaseThread):
