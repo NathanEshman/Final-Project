@@ -12,6 +12,11 @@ from bomb_phases import *
 phase_order = ["riddle", "keypad", "wires", "triangle"]
 current_phase_index = 0
 
+
+cheese_available = False
+cheese_collected = False
+cheese_timer_id = None
+
 ###########
 # generates the bootup sequence on the LCD
 def handle_riddle_strike():
@@ -147,9 +152,12 @@ def check_phases():
         # update the GUI
         gui._lwires["text"] = f"Wires: {wires}"
         # the phase is defused -> stop the thread
-        if (wires._defused):
-            wires._running = False
-            active_phases -= 1
+        
+    if (wires._defused):
+        wires._running = False
+        active_phases -= 1
+        activate_cheese_powerup()
+
         # the phase has failed -> strike
         elif (wires._failed):
             strike()
@@ -208,6 +216,26 @@ def strike():
     global strikes_left, timer
     strikes_left -= 1
     timer._value = max(0, timer._value - 5)  # ⏱ Deduct 5 seconds
+    
+def activate_cheese_powerup():
+    global cheese_available, cheese_timer_id
+    cheese_available = True
+    gui.showCheeseMessage("Cheese appeared! Press the button to collect.")
+    cheese_timer_id = gui.after(10000, deactivate_cheese_powerup)
+
+def deactivate_cheese_powerup():
+    global cheese_available
+    cheese_available = False
+    gui.showCheeseMessage("Cheese disappeared.")
+
+def collect_cheese_powerup():
+    global cheese_available, cheese_collected
+    if cheese_available and not cheese_collected:
+        cheese_collected = True
+        cheese_available = False
+        timer._value += 5
+        gui.showCheeseMessage("Cheese collected! +5 seconds added.")
+
 
 
 # turns off the bomb
