@@ -315,35 +315,34 @@ class Keypad(PhaseThread):
 # inside class Keypad(PhaseThread):
 
 def run(self):
-    self._running = True
-    while self._running:
-        if self._component.pressed_keys:
-            while self._component.pressed_keys:
-                try:
-                    key = self._component.pressed_keys[0]
-                except:
-                    key = ""
-                sleep(0.1)
-            self._value += str(key)
+        self._running = True
+        while self._running:
+            if self._component.pressed_keys:
+                while self._component.pressed_keys:
+                    try:
+                        key = self._component.pressed_keys[0]
+                    except:
+                        key = ""
+                    sleep(0.1)
+                self._value += str(key)
 
-            # ⛏ FAST DEFUSE — if one key matches target
-            if str(key) == self._target:
-                self._defused = True
-                from bomb import gui
-                gui.clearPuzzle("keypad")
-                gui.showKeypadFeedback("Correct!", color="green")
+                if str(key) == self._target:
+                    self._defused = True
+                    from bomb import gui
+                    gui.clearPuzzle("keypad")
+                    gui.showKeypadFeedback("Correct!", color="green")
+                    return
 
-            elif self._value != self._target[0:len(self._value)]:
-                self._failed = True
-        sleep(0.1)
+                elif self._value != self._target[0:len(self._value)]:
+                    self._failed = True
+            sleep(0.1)
 
-
-    # returns the keypad combination as a string
     def __str__(self):
-        if (self._defused):
+        if self._defused:
             return "DEFUSED"
         else:
             return self._value
+
 
 # the jumper wires phase
 class Wires(PhaseThread):
