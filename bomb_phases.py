@@ -328,7 +328,7 @@ class Keypad(PhaseThread):
                     from bomb import gui, strike, advance_phase, wires
 
                     print(f"[DEBUG] Locking in wire state: {wires._value}")
-                    if wires._value == "01010":  # ✅ this is the correct wire pattern
+                    if wires._value == "10101":  # ✅ this is the correct wire pattern
                         wires._defused = True
                         wires._running = False
                         gui.clearPuzzle("wires")
