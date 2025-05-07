@@ -166,7 +166,10 @@ class Lcd(Frame):
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
-        self._lkeypad_feedback.grid(row=6, column=1, pady=10)     
+        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
+        self._ltriangle_status = Label(self, bg="black", fg="white", font=("Courier New", 18), text="")
+        self._ltriangle_status.grid(row=6, column=1, pady=10)
+
 
         
     def showKeypadFeedback(self, message, color="white"):

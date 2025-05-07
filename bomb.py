@@ -45,6 +45,9 @@ def advance_phase():
 def setup_phases():
     global timer, keypad, wires, button, toggles, gui
     global triangle_puzzle
+    
+    triangle_puzzle.start()
+
 
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
@@ -110,7 +113,9 @@ def check_phases():
             keypad._value = ""
 
     if triangle_puzzle._running:
-        gui._lkeypad["text"] = f"Your Count: {keypad._value}"
+        
+       gui._ltriangle_status["text"] = f"Triangle presses: {triangle_puzzle._press_count}/{triangle_puzzle._correct_answer}"
+
         if triangle_puzzle._defused:
             triangle_puzzle._running = False
             active_phases -= 1
