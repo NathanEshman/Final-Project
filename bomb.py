@@ -113,7 +113,7 @@ def check_phases():
             keypad._failed = False
             keypad._value = ""
 
-     if triangle_puzzle._running:
+    if triangle_puzzle._running:
         gui._ltriangle_status["text"] = f"Triangle presses: {triangle_puzzle._press_count}/{triangle_puzzle._correct_answer}"
 
         if triangle_puzzle._defused:
@@ -121,6 +121,7 @@ def check_phases():
             active_phases -= 1
             gui.clearPuzzle("triangle")
             advance_phase()
+
        
             
     if wires._running:
