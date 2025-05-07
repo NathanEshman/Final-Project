@@ -27,73 +27,14 @@ class Lcd(Frame):
         window.attributes("-fullscreen", True)
         self._timer = None
         self._button = None
-        self._puzzle_frames = {}  # Stores active puzzle frames
-        self.setupBoot()
-        
-    def showGameOver(self):
-        self.clearPuzzle("riddle")
-        frame = Frame(self, bg="black")
-        frame.grid(row=7, column=0, columnspan=3)
-        label = Label(frame, text="You Lose!", fg="red", bg="black", font=("Courier New", 32))
-        label.pack(pady=100)
-
-
-    def showPuzzle(self, name, widget_builder):
-        self.clearPuzzle(name)
-        frame = Frame(self, bg="black")
-        self._puzzle_frames[name] = frame
-        frame.grid(row=7, column=0, columnspan=3)
-        widget_builder(frame)
-        
-    def showStartScreen(self, on_start):
-        self._start_screen = Frame(self, bg="black")
-        self._start_screen.place(relx=0.5, rely=0.5, anchor="center")
-        
-        try:
-            img = Image.open("Start_Mouse.jpeg").resize((1920, 1080))
-            self._start_img = ImageTk.PhotoImage(img)
-            label_img = Label(self._start_screen, image=self._start_img, bg="black")
-            label_img.pack(pady=20)
-        except Exception as e:
-            print(f"[ERROR] Failed to load start image: {e}")
-
-        title = Label(self._start_screen, text="Welcome to the Rat Maze", fg="white", bg="black", font=("Courier New", 24))
-        title.pack(pady=40)
-
-        subtitle = Label(self._start_screen, text="By Diego Diaz, Elianna Ayala, and Nathan Eshman", fg="gray", bg="black", font=("Courier New", 18))
-        subtitle.pack(pady=20)
-        
-        press_label = Label(self._start_screen, text="Press the physical button to begin", fg="white", bg="black", font=("Courier New", 18))
-        press_label.pack(pady=40)
-
-        # Start polling for hardware button press
-        self.after(100, lambda: self.wait_for_physical_start(on_start))
-    
-    def wait_for_physical_start(self, on_start):
-        if self._button is None:
-            print("[DEBUG] Waiting for button to be set...")
-            self.after(100, lambda: self.wait_for_physical_start(on_start))
-            return
-
-        if self._button._component.value:
-            print("[DEBUG] Button pressed — starting game.")
-            self._button._enabled_for_game = False  # ✅ Disable button logic after start
-            self._start_screen.destroy()
-            self._start_screen = None
-            on_start()
-
-        else:
-            self.after(100, lambda: self.wait_for_physical_start(on_start))
-
-
+        self._puzzle_frames = {}
+        self.setupBoot()        
         
     def startGame(self, on_start):
         if self._start_screen:
             self._start_screen.destroy()
             self._start_screen = None
         on_start()
-
-
 
     def clearPuzzle(self, name):
         frame = self._puzzle_frames.pop(name, None)
