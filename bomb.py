@@ -14,12 +14,12 @@ current_phase_index = 0
 
 ###########
 # generates the bootup sequence on the LCD
-
 def handle_riddle_strike():
-    global strikes_left
+    global strikes_left, timer
     strikes_left -= 1
+    timer._value = max(0, timer._value - 5)  # ⏱ Deduct 5 seconds
     gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-    return strikes_left  # Return updated value for logic checks
+    return strikes_left
 
 
 def advance_phase():
@@ -205,10 +205,10 @@ def check_phases():
 
 # handles a strike
 def strike():
-    global strikes_left
-    
-    # note the strike
+    global strikes_left, timer
     strikes_left -= 1
+    timer._value = max(0, timer._value - 5)  # ⏱ Deduct 5 seconds
+
 
 # turns off the bomb
 def turn_off():
