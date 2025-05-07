@@ -15,6 +15,9 @@ strikes_left = NUM_STRIKES
 active_phases = NUM_PHASES
 
 ##########
+def bootup():
+    gui._lscroll["text"] = ""  # Minimal placeholder
+
 def handle_riddle_strike():
     global strikes_left, timer
     strikes_left -= 1
