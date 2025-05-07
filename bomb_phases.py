@@ -263,38 +263,37 @@ class Keypad(PhaseThread):
         self._running = True
         seen_keys = set()
         while self._running:
-            try:
-                keys = self._component.pressed_keys
-                if keys:
-                    key = keys[0]
-                    if key not in seen_keys:
-                        seen_keys.add(key)
-                        print(f"[DEBUG] Key pressed: {key}")
-                        self._value += str(key)
-                        
-                        if self._value == self._target:
-                            self._defused = True
-                            from bomb import gui
-                            gui.showKeypadFeedback("Correct!", "green")
-                            gui.clearPuzzle("keypad")
-                            return
+            keys = self._component.pressed_keys
+            if keys:
+                key = keys[0]
+                if key not in seen_keys:
+                    seen_keys.add(key)
+                    self._value += str(key)
 
-                        elif not self._target.startswith(self._value):
-                            self._failed = True
-                            from bomb import gui
-                            gui.showKeypadFeedback("Incorrect!", "red")
-                            self._value = ""
-                            seen_keys.clear()
+                    if self._value == self._target:
+                        self._defused = True
+                        from bomb import gui
+                        gui.showKeypadFeedback("Correct!", "green")
+                        gui.clearPuzzle("keypad")
+                        return
 
-                else:
-                    seen_keys.clear()
+                    elif not self._target.startswith(self._value):
+                        self._failed = True
+                        from bomb import gui
+                        gui.showKeypadFeedback("Incorrect!", "red")
+                        self._value = ""
+                        seen_keys.clear()
+            else:
+                seen_keys.clear()
 
-            except Exception as e:
-                print(f"[ERROR] Keypad crashed: {e}")
             sleep(0.1)
-            
-            def __str__(self):
-                return self._value if self._value else ""
+
+    # <--- Dedent this to the class level! --->
+    def __str__(self):
+        if self._defused:
+            return "DEFUSED"
+        return self._value if self._value else ""
+
 
 
 
