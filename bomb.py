@@ -48,6 +48,9 @@ def advance_phase():
         triangle_puzzle._running = True
 
     gui.after(200, show_current_phase)
+    
+    print(f"[DEBUG] Advancing to phase: {phase_order[current_phase_index]}")
+
 
 
 def bootup(n=0):
@@ -122,9 +125,16 @@ def check_phases():
         gui._lkeypad["text"] = f"Combination: {keypad}"
         
     if keypad._defused and keypad._running:
+        print("[DEBUG] Keypad defused. Advancing to wires.")
         keypad._running = False
         gui.clearPuzzle("keypad")
+    
+    # Manually set current_phase_index to keypad's index (1)
+        global current_phase_index
+        if current_phase_index < 1:
+            current_phase_index = 1
         advance_phase()
+
 
     
     if triangle_puzzle._running:
