@@ -125,15 +125,16 @@ def check_phases():
         gui._lkeypad["text"] = f"Combination: {keypad}"
         
     if keypad._defused and keypad._running:
-        print("[DEBUG] Keypad defused. Advancing to wires.")
+        print("[DEBUG] Keypad defused")
         keypad._running = False
         gui.clearPuzzle("keypad")
     
-    # Manually set current_phase_index to keypad's index (1)
         global current_phase_index
-        if current_phase_index < 1:
+        if current_phase_index == 0:
             current_phase_index = 1
         advance_phase()
+
+
 
 
     
