@@ -292,6 +292,7 @@ button = Button(component_button_state, component_button_RGB, button_target, but
 gui.setButton(button)
 
 # now show start screen AFTER button is linked
-gui.showStartScreen(start_sequence)
+start_sequence()
+
 
 window.mainloop()
