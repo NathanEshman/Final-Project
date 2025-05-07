@@ -318,6 +318,9 @@ class Keypad(PhaseThread):
     # patch in bomb_phases.py
 # inside class Keypad(PhaseThread):
 
+# patch in bomb_phases.py
+# inside class Keypad(PhaseThread):
+
 def run(self):
     self._running = True
     while self._running:
@@ -333,7 +336,6 @@ def run(self):
             # ⛏ FAST DEFUSE — if one key matches target
             if str(key) == self._target:
                 self._defused = True
-                self._running = False
                 from bomb import gui
                 gui.clearPuzzle("keypad")
                 gui.showKeypadFeedback("Correct!", color="green")
