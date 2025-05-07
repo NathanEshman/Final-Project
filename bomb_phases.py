@@ -86,7 +86,7 @@ class Lcd(Frame):
 
     def showWiresPuzzle(self):
         def builder(frame):
-            label = Label(frame, text="Unplug the PRIMARY COLOR wires (Red, Blue, Yellow)\nThen press the button to lock in.", fg="white", bg="black", font=("Courier New", 16))
+            label = Label(frame, text="Unplug the PRIMARY COLOR wires (Red, Blue, Yellow).", fg="white", bg="black", font=("Courier New", 16))
             label.pack()
         self.showPuzzle("wires", builder)
 
@@ -368,17 +368,20 @@ class Button(PhaseThread):
 
     
 class TrianglePuzzle(PhaseThread):
-    def __init__(self, correct_answer, timer, name="TrianglePuzzle"):
+    def __init__(self, correct_answer, timer, gui, name="TrianglePuzzle"):
         super().__init__(name)
         self._press_count = 0
         self._correct_answer = correct_answer
         self._timer = timer
+        self._gui = gui  # ✅ store gui reference
 
     def run(self):
         self._running = True
         self._press_count = 0
-        if hasattr(gui, "_ltriangle_status"):
-            gui._ltriangle_status.config(text=f"Pressed: {self._press_count}/{self._correct_answer}")
+        if hasattr(self._gui, "_ltriangle_status"):
+            self._gui._ltriangle_status.config(
+                text=f"Pressed: {self._press_count}/{self._correct_answer}"
+            )
 
     def press_button(self):
         if not self._running:
@@ -387,13 +390,16 @@ class TrianglePuzzle(PhaseThread):
         self._press_count += 1
         print(f"[DEBUG] Triangle button presses: {self._press_count}")
 
-        if hasattr(gui, "_ltriangle_status"):
-            gui._ltriangle_status.config(text=f"Pressed: {self._press_count}/{self._correct_answer}")
+        if hasattr(self._gui, "_ltriangle_status"):
+            self._gui._ltriangle_status.config(
+                text=f"Pressed: {self._press_count}/{self._correct_answer}"
+            )
 
         if self._press_count >= self._correct_answer:
             self._defused = True
             self._running = False
             print("[DEBUG] Triangle Puzzle solved!")
+
             
 class BaseTogglePhase(Thread):
     def __init__(self, component, target, name="BaseToggle"):
