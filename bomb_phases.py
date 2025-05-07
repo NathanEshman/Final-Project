@@ -262,31 +262,25 @@ class Keypad(PhaseThread):
 
     def run(self):
         self._running = True
-        seen_keys = set()
         while self._running:
-            keys = self._component.pressed_keys
-            if keys:
-                key = keys[0]
-                if key not in seen_keys:
-                    seen_keys.add(key)
-                    self._value += str(key)
+            if self._component.pressed_keys:
+                # Debounce
+                while self._component.pressed_keys:
+                    try:
+                        key = self._component.pressed_keys[0]
+                    except:
+                        key = ""
+                    sleep(0.1)
 
-                    from bomb import gui
-                    print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
-                    gui._lkeypad.config(text=f"Combination: {self._value}")
+                self._value += str(key)
+                print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
 
-                    if self._value == self._target:
-                        self._defused = True
-                        gui.showKeypadFeedback("Correct!", "green")
-                        gui.clearPuzzle("keypad")
-                        return
-                    elif not self._target.startswith(self._value):
-                        self._failed = True
-                        gui.showKeypadFeedback("Incorrect!", "red")
-                        self._value = ""
-                        seen_keys.clear()
-            else:
-                seen_keys.clear()
+                if self._value == self._target:
+                    self._defused = True
+                    print("[DEBUG] Keypad defused!")
+                elif self._value != self._target[0:len(self._value)]:
+                    self._failed = True
+                    print("[DEBUG] Incorrect keypad input, resetting...")
             sleep(0.1)
 
     def __str__(self):
