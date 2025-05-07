@@ -315,26 +315,35 @@ class Keypad(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
-        while (self._running):
-            # process keys when keypad key(s) are pressed
-            if (self._component.pressed_keys):
-                # debounce
-                while (self._component.pressed_keys):
+        while self._running:
+            if self._component.pressed_keys:
+                while self._component.pressed_keys:
                     try:
-                        # just grab the first key pressed if more than one were pressed
                         key = self._component.pressed_keys[0]
                     except:
                         key = ""
                     sleep(0.1)
-                # log the key
-                self._value += str(key)
-                # the combination is correct -> phase defused
-                if (self._value == self._target):
+
+                if key == "#":
+                    if wires._running:
+                        wires.lock_in()
+                        if wires.is_correct():
+                            wires._defused = True
+                            wires._running = False
+                            from bomb import advance_phase
+                            advance_phase()
+                        else:
+                            from bomb import strike
+                            strike()
+                else:
+                    self._value += str(key)
+
+                if self._value == self._target:
                     self._defused = True
-                # the combination is incorrect -> phase failed (strike)
-                elif (self._value != self._target[0:len(self._value)]):
+                elif self._value != self._target[:len(self._value)]:
                     self._failed = True
             sleep(0.1)
+
 
     # returns the keypad combination as a string
     def __str__(self):
@@ -366,18 +375,10 @@ class Wires(PhaseThread):
             try:
                 value_bin = "".join([str(int(pin.value)) for pin in self._component])
                 self._value = value_bin
-                # No need to auto-fail — we only evaluate when button is pressed
-                if self._locked_in:
-                    value_dec = int(value_bin, 2)
-                    expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
-                    if value_dec == expected_value:
-                        self._defused = True
-                        self._running = False
-                    # Reset lock after checking
-                    self._locked_in = False
             except Exception as e:
                 print(f"[ERROR] Wires phase: {e}")
             sleep(0.1)
+
 
 
     def __str__(self):

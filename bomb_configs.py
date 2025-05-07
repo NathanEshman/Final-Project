@@ -16,7 +16,7 @@ FIRST_GAME_IS_RIDDLE = True  # Add this line
 RIDDLE_MODE = True
 RIDDLE_TOGGLE_ANSWER = 4 
 MATH_MODE = True
-PRIMARY_COLOR_WIRES = [0, 1, 2]  # Red = wire 0, Blue = 1, Yellow = 2
+PRIMARY_COLOR_WIRES = [0, 2]  # Red = wire 0, Blue = 1, Yellow = 2
 
 
 
