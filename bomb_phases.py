@@ -103,50 +103,6 @@ class Lcd(Frame):
         self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
-        
-    def showStartScreen(self, on_start):
-        self._start_screen = Frame(self, bg="black")
-        self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=10, sticky="nsew")
-
-        title = Label(
-            self._start_screen,
-            text="WELCOME TO THE MOUSE MAZE",
-            fg="#ffcc00",
-            bg="black",
-            font=("Courier New", 36)
-        )
-        title.pack(pady=60)
-
-        names = Label(
-            self._start_screen,
-            text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
-            fg="white",
-            bg="black",
-            font=("Courier New", 20)
-        )
-        names.pack(pady=20)
-
-        prompt = Label(
-            self._start_screen,
-            text="Click the button below to start the game",
-            fg="gray",
-            bg="black",
-            font=("Courier New", 18)
-        )
-        prompt.pack(pady=40)
-        
-        start_button = tkinter.Button(
-            self._start_screen,
-            text="START",
-            font=("Courier New", 20),
-            fg="white",
-            bg="green",
-            command=lambda: self.startGame(on_start)
-            )
-
-        start_button.pack(pady=30)
-
-
 
     def setup(self):
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
@@ -167,10 +123,6 @@ class Lcd(Frame):
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
         self._lkeypad_feedback.grid(row=6, column=1, pady=10)     
-        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
-        self._ltriangle_status = Label(self, bg="black", fg="white", font=("Courier New", 18), text="")
-        self._ltriangle_status.grid(row=6, column=1, pady=10)
-
 
         
     def showKeypadFeedback(self, message, color="white"):
@@ -265,6 +217,7 @@ class Timer(PhaseThread):
             try:
                 if not self._paused:
                     self._update()
+                    print(f"[DEBUG] Timer value = {self._value}")  # Add this
                     self._component.print(str(self))
                     if self._value == 0:
                         print("[DEBUG] Timer hit 0")
