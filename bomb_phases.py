@@ -327,36 +327,24 @@ class Keypad(PhaseThread):
                     
                 from bomb import cheese_available, collect_cheese_powerup
 
-                if key == "*":
-                    if cheese_available:
-                        print("[DEBUG] Cheese collected via *")
-                        collect_cheese_powerup()
+                elif phase_order[current_phase_index] == "keypad":
+                    self._value += str(key)
+                    if self._value == self._target:
+                        self._defused = True
+                    elif self._value != self._target[:len(self._value)]:
+                        self._failed = True
 
-                if key == "#":
-                    from bomb import gui, strike, advance_phase, wires
-
+                elif phase_order[current_phase_index] == "wires" and key == "#":
+                    from bomb import gui, strike, wires
                     print(f"[DEBUG] Locking in wire state: {wires._value}")
-                    if wires._value == "10101":  # ✅ this is the correct wire pattern
+                    if wires._value == "10101":
                         wires._defused = True
                         wires._running = False
                         gui.clearPuzzle("wires")
-                        advance_phase()
                     else:
                         strike()
-
-                else:
-                    self._value += str(key)
-
-            # Keypad answer check for other puzzle (optional)
-                if self._value == self._target:
-                    self._defused = True
-                elif self._value != self._target[:len(self._value)]:
-                    self._failed = True
-
+                
             sleep(0.1)
-
-
-
     # returns the keypad combination as a string
     def __str__(self):
         if (self._defused):
