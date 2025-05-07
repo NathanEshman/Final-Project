@@ -254,8 +254,6 @@ class Timer(PhaseThread):
 
 
 # the keypad phase
-class Keypad(PhaseThread):
-    # bomb_phases.py (patched Keypad class only)
 
 class Keypad(PhaseThread):
     def __init__(self, component, target, name="Keypad"):
