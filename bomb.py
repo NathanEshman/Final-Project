@@ -47,6 +47,7 @@ def setup_phases():
     global timer, keypad, wires, button, toggles, gui
     global triangle_puzzle
     
+    triangle_puzzle = TrianglePuzzle(6, timer, gui)
     triangle_puzzle.start()
 
 
@@ -56,7 +57,8 @@ def setup_phases():
     keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
     triangle_puzzle = TrianglePuzzle(6, timer, keypad)
-    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
+    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
+
     gui.setButton(button)
 
     if RIDDLE_MODE:

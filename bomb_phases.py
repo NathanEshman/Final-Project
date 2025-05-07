@@ -191,7 +191,7 @@ class Lcd(Frame):
         self._timer = timer
 
     def setButton(self, button):
-        self._button = button
+        self._ = button
 
     def pause(self):
         if RPi:
@@ -388,7 +388,7 @@ class Wires(PhaseThread):
 
 # the pushbutton phase
 class Button(PhaseThread):
-    def __init__(self, component_state, component_rgb, target, color, timer, name="Button"):
+    def __init__(self, component_state, component_rgb, target, color, timer, triangle_puzzle, name="Button"):
         super().__init__(name, component_state, target)
         self._value = False
         self._pressed = False
@@ -396,7 +396,8 @@ class Button(PhaseThread):
         self._color = color
         self._timer = timer
         self._enabled_for_game = True
-
+        self._triangle_puzzle = triangle_puzzle
+        
     def run(self):
         self._running = True
 
@@ -406,10 +407,13 @@ class Button(PhaseThread):
 
             if self._value and not prev_value:
                 print("[DEBUG] Button pressed")
-                if triangle_puzzle._running:
-                    triangle_puzzle.press_button()
+                
+                # ✅ Only call triangle logic if active
+                if self._triangle_puzzle._running:
+                    self._triangle_puzzle.press_button()
 
             sleep(0.1)
+
 
 
     
