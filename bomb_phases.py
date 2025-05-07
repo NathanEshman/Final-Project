@@ -255,6 +255,9 @@ class Timer(PhaseThread):
 
 # the keypad phase
 class Keypad(PhaseThread):
+    # bomb_phases.py (patched Keypad class only)
+
+class Keypad(PhaseThread):
     def __init__(self, component, target, name="Keypad"):
         super().__init__(name, component, target)
         self._value = ""
@@ -270,8 +273,8 @@ class Keypad(PhaseThread):
                     seen_keys.add(key)
                     self._value += str(key)
 
-                    # <-- new: immediately update the GUI -->
                     from bomb import gui
+                    print(f"[DEBUG] Key pressed: {key}, Current input: {self._value}")
                     gui._lkeypad.config(text=f"Combination: {self._value}")
 
                     if self._value == self._target:
@@ -279,24 +282,20 @@ class Keypad(PhaseThread):
                         gui.showKeypadFeedback("Correct!", "green")
                         gui.clearPuzzle("keypad")
                         return
-                    # … rest of your logic …
+                    elif not self._target.startswith(self._value):
+                        self._failed = True
+                        gui.showKeypadFeedback("Incorrect!", "red")
+                        self._value = ""
+                        seen_keys.clear()
+            else:
+                seen_keys.clear()
+            sleep(0.1)
 
-                elif not self._target.startswith(self._value):
-                    self._failed = True
-                    from bomb import gui
-                    gui.showKeypadFeedback("Incorrect!", "red")
-                    self._value = ""
-                    seen_keys.clear()
-        else:
-            seen_keys.clear()
-
-        sleep(0.1)
-
-    # <--- Dedent this to the class level! --->
     def __str__(self):
         if self._defused:
             return "DEFUSED"
         return self._value if self._value else ""
+
 
 
 
