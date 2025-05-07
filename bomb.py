@@ -63,9 +63,9 @@ def setup_phases():
     toggles.start()
     triangle_puzzle.start()
     
-    # Only enable the first phase
+    
     for phase in [keypad, wires, triangle_puzzle, toggles]:
-        phase._running = False
+        phase._running = True 
 
     first_phase = phase_order[current_phase_index]
     if first_phase == "riddle":
