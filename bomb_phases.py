@@ -332,7 +332,7 @@ class Keypad(PhaseThread):
                         print("[DEBUG] Cheese collected via *")
                         collect_cheese_powerup()
 
-                elif key == "#":
+                if key == "#":
                     from bomb import gui, strike, advance_phase, wires
 
                     print(f"[DEBUG] Locking in wire state: {wires._value}")
