@@ -70,7 +70,8 @@ def setup_phases():
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
 
-    keypad = Keypad(component_keypad, keypad_target)
+    keypad = Keypad(component_keypad, "8")
+    
     wires = Wires(component_wires, wires_target)
     triangle_puzzle = TrianglePuzzle(6, timer, keypad)  # Use your actual triangle count
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
@@ -119,6 +120,12 @@ def check_phases():
     
     if (keypad._running):
         gui._lkeypad["text"] = f"Combination: {keypad}"
+        
+    if keypad._defused and keypad._running:
+        keypad._running = False
+        gui.clearPuzzle("keypad")
+        advance_phase()
+
     
     if triangle_puzzle._running:
         gui._lkeypad["text"] = f"Your Count: {keypad._value}"
