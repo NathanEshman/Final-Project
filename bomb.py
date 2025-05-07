@@ -177,15 +177,15 @@ def turn_off():
     for pin in button._rgb:
         pin.value = True
 
-def start_sequence():#
-    bootup()
+def start_sequence():
     def after_boot():
         gui.setup()
         if RPi:
             setup_phases()
         show_current_phase()
         check_phases()
-    gui.after(4000, after_boot)
+
+    gui.showStartScreen(after_boot)
 
 ##########
 window = Tk()

@@ -178,6 +178,38 @@ class Lcd(Frame):
             for pin in self._button._rgb:
                 pin.value = True
         exit(0)
+        
+    def showStartScreen(self, on_start_callback):
+        self._start_screen = Frame(self, bg="black")
+        self._start_screen.grid(row=0, column=0, columnspan=3, rowspan=9, sticky="nsew")
+
+        title = Label(
+            self._start_screen,
+            text="DEFUSE THE BOMB",
+            font=("Courier New", 48),
+            fg="white",
+            bg="black"
+        )
+        title.pack(pady=80)
+
+        names_label = Label(
+            self._start_screen,
+            text="By Elianna Ayala, Diego Diaz, Nathan Eshman",
+            font=("Courier New", 18),
+            fg="gray",
+            bg="black"
+        )
+        names_label.pack(pady=20)
+
+        start_button = Button(
+            self._start_screen,
+            text="Start",
+            font=("Courier New", 24),
+            fg="black",
+            bg="lime",
+            command=lambda: self.startGame(on_start_callback)
+        )
+        start_button.pack(pady=40)
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
