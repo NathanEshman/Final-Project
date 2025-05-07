@@ -576,9 +576,9 @@ class RiddleToggles(BaseTogglePhase):
                 elif value_dec != 0 and value_dec != self._target:
                     if self._last_wrong != value_dec:
                         print(f"[DEBUG] Incorrect toggle value: {value_dec}, expected {self._target}")
-                        self._failed = True
-                        strikes_left = self._on_strike()
+                        strikes_left = self._on_strike()  # ✅ Strike handled here only
                         self._last_wrong = value_dec
+
 
                         if strikes_left <= 0:
                             print("[DEBUG] No strikes left — game over")
