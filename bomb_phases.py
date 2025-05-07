@@ -323,9 +323,13 @@ class Keypad(PhaseThread):
                     except:
                         key = ""
                     sleep(0.1)
-                    
-                    
-                from bomb import cheese_available, collect_cheese_powerup
+
+                from bomb import cheese_available, collect_cheese_powerup, phase_order, current_phase_index
+
+                if key == "*":
+                    if cheese_available:
+                        print("[DEBUG] Cheese collected via *")
+                        collect_cheese_powerup()
 
                 elif phase_order[current_phase_index] == "keypad":
                     self._value += str(key)
@@ -343,7 +347,7 @@ class Keypad(PhaseThread):
                         gui.clearPuzzle("wires")
                     else:
                         strike()
-                
+
             sleep(0.1)
     # returns the keypad combination as a string
     def __str__(self):
