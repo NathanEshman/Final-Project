@@ -159,12 +159,6 @@ def check_phases():
     if (keypad._running):
         gui._lkeypad["text"] = f"Keypad: {keypad}"
 
-# ✅ Only advance if keypad is defused AND still marked as running
-    if (keypad._defused and keypad._running):
-        keypad._running = False
-        gui.clearPuzzle("keypad")  # Optional cleanup
-        advance_phase()
-
     elif (keypad._failed):
         strike()
         keypad._failed = False
