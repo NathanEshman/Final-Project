@@ -134,16 +134,17 @@ class Lcd(Frame):
             font=("Courier New", 18)
         )
         prompt.pack(pady=40)
-
-        start_button = Button(
-            self._start_screen,
-            text="START",
-            font=("Courier New", 20),
-            fg="white",
-            bg="green",
-            command=lambda: self.startGame(on_start)
+        
+    start_button = tkinter.Button(
+        self._start_screen,
+        text="START",
+        font=("Courier New", 20),
+        fg="white",
+        bg="green",
+        command=lambda: self.startGame(on_start)
         )
-        start_button.pack(pady=30)
+
+    start_button.pack(pady=30)
 
 
 
