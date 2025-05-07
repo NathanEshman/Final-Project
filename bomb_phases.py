@@ -259,38 +259,38 @@ class Keypad(PhaseThread):
         super().__init__(name, component, target)
         self._value = ""
 
-        def run(self):
-            self._running = True
-            seen_keys = set()
-            while self._running:
-                keys = self._component.pressed_keys
-                if keys:
-                    key = keys[0]
-                    if key not in seen_keys:
-                        seen_keys.add(key)
-                        self._value += str(key)
+    def run(self):
+        self._running = True
+        seen_keys = set()
+        while self._running:
+            keys = self._component.pressed_keys
+            if keys:
+                key = keys[0]
+                if key not in seen_keys:
+                    seen_keys.add(key)
+                    self._value += str(key)
 
-                        # <-- new: immediately update the GUI -->
-                        from bomb import gui
-                        gui._lkeypad.config(text=f"Combination: {self._value}")
+                    # <-- new: immediately update the GUI -->
+                    from bomb import gui
+                    gui._lkeypad.config(text=f"Combination: {self._value}")
 
-                        if self._value == self._target:
-                            self._defused = True
-                            gui.showKeypadFeedback("Correct!", "green")
-                            gui.clearPuzzle("keypad")
-                            return
-                        # … rest of your logic …
+                    if self._value == self._target:
+                        self._defused = True
+                        gui.showKeypadFeedback("Correct!", "green")
+                        gui.clearPuzzle("keypad")
+                        return
+                    # … rest of your logic …
 
-                    elif not self._target.startswith(self._value):
-                        self._failed = True
-                        from bomb import gui
-                        gui.showKeypadFeedback("Incorrect!", "red")
-                        self._value = ""
-                        seen_keys.clear()
-            else:
-                seen_keys.clear()
+                elif not self._target.startswith(self._value):
+                    self._failed = True
+                    from bomb import gui
+                    gui.showKeypadFeedback("Incorrect!", "red")
+                    self._value = ""
+                    seen_keys.clear()
+        else:
+            seen_keys.clear()
 
-            sleep(0.1)
+        sleep(0.1)
 
     # <--- Dedent this to the class level! --->
     def __str__(self):
