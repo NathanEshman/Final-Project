@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #################################
 # CSC 102 Defuse the Bomb Project
 # Main program
@@ -31,8 +29,7 @@ def advance_phase():
     global current_phase_index
     current_phase_index += 1
     if current_phase_index >= len(phase_order):
-        gui.after(200, gui.conclusion, True)
-        return
+        return  # All phases complete
     phase = phase_order[current_phase_index]
     if phase == "riddle":
         toggles._running = True
@@ -44,19 +41,21 @@ def advance_phase():
         triangle_puzzle._running = True
     gui.after(200, show_current_phase)
 
+
 def setup_phases():
-    global timer, keypad, wires, button, toggles, gui, triangle_puzzle
+    global timer, keypad, wires, button, toggles, gui
+    global triangle_puzzle
+    
+    triangle_puzzle.start()
+
 
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
 
-    triangle_puzzle = TrianglePuzzle(6, timer, gui)
-    triangle_puzzle.start()
-
     keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
-    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
-
+    triangle_puzzle = TrianglePuzzle(6, timer, keypad)
+    button = Button(component_button_state, component_button_RGB, button_target, button_color, timer)
     gui.setButton(button)
 
     if RIDDLE_MODE:
@@ -69,8 +68,8 @@ def setup_phases():
     wires.start()
     toggles.start()
     triangle_puzzle.start()
+    
 
-    # Start only the first phase
     first_phase = phase_order[current_phase_index]
     if first_phase == "riddle":
         toggles._running = True
@@ -82,8 +81,6 @@ def setup_phases():
         triangle_puzzle._running = True
 
     gui.after(200, show_current_phase)
-
-
     if phase_order[current_phase_index] == "riddle":
         toggles._running = True
 
@@ -102,8 +99,6 @@ def show_current_phase():
 
 def check_phases():
     global active_phases
-    
-    gui._ltimer["text"] = f"Time left: {timer}" 
 
     if keypad._running or keypad._defused:
         gui._lkeypad["text"] = f"{'DEFUSED' if keypad._defused else f'Input: {keypad._value}'}"
@@ -118,14 +113,15 @@ def check_phases():
             keypad._value = ""
 
     if triangle_puzzle._running:
-        gui._ltriangle_status["text"] = f"Triangle presses: {triangle_puzzle._press_count}/{triangle_puzzle._correct_answer}"
+        gui._lkeypad["text"] = f"Your Count: {keypad._value}"
+        
+       gui._ltriangle_status["text"] = f"Triangle presses: {triangle_puzzle._press_count}/{triangle_puzzle._correct_answer}"
 
         if triangle_puzzle._defused:
             triangle_puzzle._running = False
             active_phases -= 1
             gui.clearPuzzle("triangle")
             advance_phase()
-
             
     if wires._running:
         gui._lwires["text"] = f"Wires: {wires}"
@@ -172,7 +168,6 @@ def check_phases():
         return
 
     gui.after(100, check_phases)
->>>>>>> 17b990d1a38a9b0c2fac42eb42d32e8be22763d6
 
 def strike():
     global strikes_left, timer
