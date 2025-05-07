@@ -62,7 +62,7 @@ def setup_phases():
 
     keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
-    triangle_puzzle = TrianglePuzzle(correct_answer=6, timer=timer, keypad=keypad)  # Use your actual triangle count
+    triangle_puzzle = TrianglePuzzle(6, timer, keypad)  # Use your actual triangle count
     triangle_puzzle.start()
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
     gui.setButton(button)
