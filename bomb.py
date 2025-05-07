@@ -235,6 +235,9 @@ def start_sequence():
         if RPi:
             setup_phases()  # ✅ Start the bomb phase threads
             toggles.set_state([0, 1, 0, 0])  # Optional: test preset state
+            
+            if phase_order[current_phase_index] == "riddle":
+                toggles._running = True
 
         show_current_phase()  # ✅ Show the puzzle corresponding to current_phase_index
 
