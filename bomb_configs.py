@@ -146,7 +146,7 @@ if RIDDLE_MODE:
 
 # MATH MODE override for keypad phase
 if MATH_MODE:
-    math_question = "√10 + 2"
+    math_question = "28-20"
     keypad_target = "8"  
     passphrase = math_question
 else:
