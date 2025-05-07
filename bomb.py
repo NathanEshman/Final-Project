@@ -140,20 +140,17 @@ def check_phases():
         return
     # check the keypad
     if (keypad._running):
-        # update the GUI
-        gui._lkeypad["text"] = f"Combination: {keypad}"
-        # the phase is defused -> stop the thread
-        if (keypad._defused):
-            keypad._running = False
-            active_phases -= 1
-            advance_phase()  # ✅ This moves to the next puzzle correctly
+    gui._lkeypad["text"] = f"Keypad: {keypad}"
 
-        # the phase has failed -> strike
-        elif (keypad._failed):
-            strike()
-            # reset the keypad
-            keypad._failed = False
-            keypad._value = ""
+# ✅ Only advance if keypad is defused AND still marked as running
+    if (keypad._defused and keypad._running):
+        keypad._running = False
+        gui.clearPuzzle("keypad")  # Optional cleanup
+        advance_phase()
+
+    elif (keypad._failed):
+        strike()
+        keypad._failed = False
     # check the wires
     if (wires._running):
         gui._lwires["text"] = f"Wires: {wires}"
