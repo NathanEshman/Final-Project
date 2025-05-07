@@ -190,7 +190,7 @@ class Lcd(Frame):
             fg="white",
             bg="black"
         )
-        title.pack(pady=80)
+        title.pack(pady=60)
 
         names_label = Label(
             self._start_screen,
@@ -199,26 +199,32 @@ class Lcd(Frame):
             fg="gray",
             bg="black"
         )
-        names_label.pack(pady=20)
+        names_label.pack(pady=10)
 
         instruction_label = Label(
             self._start_screen,
-            text="Click Start to begin the game",
+            text="Touch or click below to start the game",
             font=("Courier New", 16),
             fg="white",
             bg="black"
         )
-        instruction_label.pack(pady=10)
+        instruction_label.pack(pady=20)
 
-        start_button = Button(
+        big_start_input = Label(
             self._start_screen,
-            text="Start",
-            font=("Courier New", 24),
-            fg="black",
+            text="START",
+            font=("Courier New", 32, "bold"),
             bg="lime",
-            command=lambda: self.startGame(on_start_callback)
+            fg="black",
+            padx=80,
+            pady=30,
+            relief="raised",
+            borderwidth=6,
+            cursor="hand2"
         )
-        start_button.pack(pady=40)
+        big_start_input.pack(pady=50)
+        big_start_input.bind("<Button-1>", lambda e: self.startGame(on_start_callback))
+
 
 # template (superclass) for various bomb components/phases
 class PhaseThread(Thread):
