@@ -164,6 +164,13 @@ class Lcd(Frame):
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
         self._lkeypad_feedback.grid(row=6, column=1, pady=10)
+        self._lcheese = Label(self, bg="black", fg="orange", font=("Courier New", 16), text="")
+        self._lcheese.grid(row=9, column=0, columnspan=3)
+        
+    def showCheeseMessage(self, message):
+        self._lcheese.config(text=message)
+        self.after(3000, lambda: self._lcheese.config(text=""))
+
         
     def showKeypadFeedback(self, message, color="white"):
         self._lkeypad_feedback.config(text=message, fg=color)
@@ -404,6 +411,17 @@ class Button(PhaseThread):
             self._value = self._component.value
             if self._value:
                 self._pressed = True
+                
+  # Check for cheese collection
+try:
+    from bomb import cheese_available, collect_cheese_powerup
+    if cheese_available:
+        collect_cheese_powerup()
+        return
+except ImportError:
+    pass  # Avoid crash if circular import
+   
+                
             else:
                 if self._pressed:
                     # If wires phase is active and not defused, perform wire-check logic
