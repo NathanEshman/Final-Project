@@ -141,6 +141,8 @@ def check_phases():
         if (keypad._defused):
             keypad._running = False
             active_phases -= 1
+            advance_phase()  # ✅ This moves to the next puzzle correctly
+
         # the phase has failed -> strike
         elif (keypad._failed):
             strike()

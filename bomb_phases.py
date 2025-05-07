@@ -474,6 +474,8 @@ class TrianglePuzzle(PhaseThread):
             self._defused = True
             self._running = False
             print("[DEBUG] Triangle Puzzle solved!")
+            from bomb import advance_phase
+            advance_phase()
         else:
             self._timer._value = max(0, self._timer._value - 5)
             print("[DEBUG] Wrong triangle count! -5 seconds")
