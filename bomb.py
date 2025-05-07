@@ -29,7 +29,8 @@ def advance_phase():
     global current_phase_index
     current_phase_index += 1
     if current_phase_index >= len(phase_order):
-        return  # All phases complete
+        gui.after(200, gui.conclusion, True)
+        return
     phase = phase_order[current_phase_index]
     if phase == "riddle":
         toggles._running = True
