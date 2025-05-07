@@ -149,7 +149,6 @@ class Lcd(Frame):
         self.pack(fill=BOTH, expand=True)
 
     def setup(self):
-        # create empty placeholder labels (will be used selectively)
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
         self._lkeypad = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="")
@@ -167,13 +166,7 @@ class Lcd(Frame):
         self._lstrikes = Label(self, bg="black", fg="#ff5555", font=("Courier New", 18), text="Strikes left: 5")
         self._lstrikes.grid(row=8, column=2, sticky=SE, padx=20, pady=10)
         self._lkeypad_feedback = Label(self, bg="black", fg="white", font=("Courier New", 20), text="")
-        self._lkeypad_feedback.grid(row=6, column=1, pady=10)
-        self._lcheese = Label(self, bg="black", fg="orange", font=("Courier New", 16), text="")
-        self._lcheese.grid(row=9, column=0, columnspan=3)
-        
-    def showCheeseMessage(self, message):
-        self._lcheese.config(text=message)
-        self.after(3000, lambda: self._lcheese.config(text=""))
+        self._lkeypad_feedback.grid(row=6, column=1, pady=10)     
 
         
     def showKeypadFeedback(self, message, color="white"):
