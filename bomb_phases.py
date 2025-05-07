@@ -343,20 +343,8 @@ class Keypad(PhaseThread):
                         gui.clearPuzzle("wires")
                     else:
                         strike()
-
-                    else:
-                        self._value += str(key)
-
-            # Keypad answer check for other puzzle (optional)
-                if self._value == self._target:
-                    self._defused = True
-                elif self._value != self._target[:len(self._value)]:
-                    self._failed = True
-
+                
             sleep(0.1)
-
-
-
     # returns the keypad combination as a string
     def __str__(self):
         if (self._defused):
