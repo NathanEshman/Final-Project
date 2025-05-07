@@ -353,53 +353,48 @@ class Button(PhaseThread):
         self._enabled_for_game = True
 
     def run(self):
-        self._running = True
-        self._rgb[0].value = False if self._color == "R" else True
-        self._rgb[1].value = False if self._color == "G" else True
-        self._rgb[2].value = False if self._color == "B" else True
+    self._running = True
 
-        while self._running:
-            self._value = self._component.value
-            # ❌ Ignore presses completely
-            sleep(0.1)
+    while self._running:
+        prev_value = self._value
+        self._value = self._component.value
 
+        if self._value and not prev_value:
+            print("[DEBUG] Button pressed")
+            if triangle_puzzle._running:
+                triangle_puzzle.press_button()
 
-        
+        sleep(0.1)
+
+    
 class TrianglePuzzle(PhaseThread):
-    def __init__(self, correct_answer, timer, keypad, name="TrianglePuzzle"):
+    def __init__(self, correct_answer, timer, name="TrianglePuzzle"):
         super().__init__(name)
-        self._correct_answer = str(correct_answer)
-        self._input = ""
+        self._press_count = 0
+        self._correct_answer = correct_answer
         self._timer = timer
-        self._keypad = keypad
-        
+
     def run(self):
         self._running = True
-        while self._running:
-            if self._keypad._value:
-                self._input = self._keypad._value
-            sleep(0.1)
+        self._press_count = 0
+        if hasattr(gui, "_ltriangle_status"):
+            gui._ltriangle_status.config(text=f"Pressed: {self._press_count}/{self._correct_answer}")
 
-    def lock_in(self):
-        if self._input == self._correct_answer:
+    def press_button(self):
+        if not self._running:
+            return
+
+        self._press_count += 1
+        print(f"[DEBUG] Triangle button presses: {self._press_count}")
+
+        if hasattr(gui, "_ltriangle_status"):
+            gui._ltriangle_status.config(text=f"Pressed: {self._press_count}/{self._correct_answer}")
+
+        if self._press_count >= self._correct_answer:
             self._defused = True
             self._running = False
             print("[DEBUG] Triangle Puzzle solved!")
-        else:
-            self._timer._value = max(0, self._timer._value - 5)
-            print("[DEBUG] Wrong triangle count! -5 seconds")
-            # reset input to try again
-            keypad._value = ""
-
-
-    # returns the pushbutton's state as a string
-    def __str__(self):
-        if (self._defused):
-            return "DEFUSED"
-        else:
-            return str("Pressed" if self._value else "Released")
-
-
+            
 class BaseTogglePhase(Thread):
     def __init__(self, component, target, name="BaseToggle"):
         super().__init__(name=name, daemon=True)
