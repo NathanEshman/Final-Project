@@ -114,12 +114,17 @@ def check_phases():
         if triangle_puzzle._defused:
             triangle_puzzle._running = False
             active_phases -= 1
-
+            gui.clearPuzzle("triangle")
+            advance_phase()
+            
     if wires._running:
         gui._lwires["text"] = f"Wires: {wires}"
         if wires._defused:
             wires._running = False
             active_phases -= 1
+            gui.clearPuzzle("wires")
+            advance_phase()  
+            
         elif wires._failed:
             strike()
             wires._failed = False
@@ -187,5 +192,5 @@ def start_sequence():#
 ##########
 window = Tk()
 gui = Lcd(window)
-start_sequence()
+gui.showStartScreen(start_sequence)
 window.mainloop()
