@@ -1,3 +1,4 @@
+@ -1,599 +1,617 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # GUI and Phase class definitions
@@ -70,9 +71,11 @@ class Lcd(Frame):
         self.after(100, lambda: self.wait_for_physical_start(on_start))
     
     def wait_for_physical_start(self, on_start):
-        # if the start‐screen has already been destroyed, stop polling
-        if not getattr(self, "_start_screen", None):
+        if self._button is None:
+            print("[DEBUG] Waiting for button to be set...")
+            self.after(100, lambda: self.wait_for_physical_start(on_start))
             return
+
         if self._button._component.value:
             print("[DEBUG] Button pressed — starting game.")
             self._start_screen.destroy()
@@ -313,40 +316,27 @@ class Keypad(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
-        while self._running:
-            if self._component.pressed_keys:
-                while self._component.pressed_keys:
+        while (self._running):
+            # process keys when keypad key(s) are pressed
+            if (self._component.pressed_keys):
+                # debounce
+                while (self._component.pressed_keys):
                     try:
+                        # just grab the first key pressed if more than one were pressed
                         key = self._component.pressed_keys[0]
                     except:
                         key = ""
                     sleep(0.1)
-
-                from bomb import cheese_available, collect_cheese_powerup, phase_order, current_phase_index
-
-                if key == "*":
-                    if cheese_available:
-                        print("[DEBUG] Cheese collected via *")
-                        collect_cheese_powerup()
-
-                elif phase_order[current_phase_index] == "keypad":
-                    self._value += str(key)
-                    if self._value == self._target:
-                        self._defused = True
-                    elif self._value != self._target[:len(self._value)]:
-                        self._failed = True
-
-                elif phase_order[current_phase_index] == "wires" and key == "#":
-                    from bomb import gui, strike, wires
-                    print(f"[DEBUG] Locking in wire state: {wires._value}")
-                    if wires._value == "10101":
-                        wires._defused = True
-                        wires._running = False
-                        gui.clearPuzzle("wires")
-                    else:
-                        strike()
-
+                # log the key
+                self._value += str(key)
+                # the combination is correct -> phase defused
+                if (self._value == self._target):
+                    self._defused = True
+                # the combination is incorrect -> phase failed (strike)
+                elif (self._value != self._target[0:len(self._value)]):
+                    self._failed = True
             sleep(0.1)
+
     # returns the keypad combination as a string
     def __str__(self):
         if (self._defused):
@@ -377,10 +367,18 @@ class Wires(PhaseThread):
             try:
                 value_bin = "".join([str(int(pin.value)) for pin in self._component])
                 self._value = value_bin
+                # No need to auto-fail — we only evaluate when button is pressed
+                if self._locked_in:
+                    value_dec = int(value_bin, 2)
+                    expected_value = sum([2**i for i in PRIMARY_COLOR_WIRES])
+                    if value_dec == expected_value:
+                        self._defused = True
+                        self._running = False
+                    # Reset lock after checking
+                    self._locked_in = False
             except Exception as e:
                 print(f"[ERROR] Wires phase: {e}")
             sleep(0.1)
-
 
 
     def __str__(self):
@@ -409,6 +407,7 @@ class Button(PhaseThread):
 
     # runs the thread
     def run(self):
+        global triangle_puzzle
         self._running = True
         self._rgb[0].value = False if self._color == "R" else True
         self._rgb[1].value = False if self._color == "G" else True
@@ -418,15 +417,59 @@ class Button(PhaseThread):
             self._value = self._component.value
             if self._value:
                 self._pressed = True
+                
+  # Check for cheese collection
+try:
+    from bomb import cheese_available, collect_cheese_powerup
+    if cheese_available:
+        collect_cheese_powerup()
+        return
+except ImportError:
+    pass  # Avoid crash if circular import
+   
+                
             else:
                 if self._pressed:
-                    print("[DEBUG] Button pressed (start screen only)")
+                    # If wires phase is active and not defused, perform wire-check logic
+                    print("[DEBUG] Button pressed and released")
+                    
+                    if triangle_puzzle._running:
+                        triangle_puzzle.lock_in()
+
+                    elif keypad._running:
+                        print(f"[DEBUG] Checking keypad value: {keypad._value}")
+                        if keypad._value == keypad._target:
+                            keypad._defused = True
+                            keypad._running = False
+                            print("[DEBUG] Keypad solved!")
+                            gui.showKeypadFeedback("Correct!", color="green")  # ✅ show success
+                            gui.clearPuzzle("keypad")
+                        else:
+                            print("[DEBUG] Wrong keypad input — strike")
+                            gui.showKeypadFeedback("Wrong! Try again", color="red")  # ❌ show error
+                            keypad._value = ""  # reset keypad input
+                            strike()
+                            gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+
+
+                    else:
+                        if (not self._target or self._target in self._timer._sec):
+                            self._defused = True
+                        else:
+                            self._failed = True
+
+
+                    if wires._running and not wires._defused:
+                        wires.lock_in()
+                        if wires.is_correct():
+                            wires._defused = True
+                            wires._running = False
+                        else:
+                            self._timer._value = max(0, self._timer._value - 5)  # ⏱️ Deduct 5 seconds
+                            print("[DEBUG] Incorrect wires, -5 seconds penalty")
+                    
                     self._pressed = False
             sleep(0.1)
-
-
-
-
         
 class TrianglePuzzle(PhaseThread):
     def __init__(self, correct_answer, timer, keypad, name="TrianglePuzzle"):
@@ -448,8 +491,6 @@ class TrianglePuzzle(PhaseThread):
             self._defused = True
             self._running = False
             print("[DEBUG] Triangle Puzzle solved!")
-            from bomb import advance_phase
-            advance_phase()
         else:
             self._timer._value = max(0, self._timer._value - 5)
             print("[DEBUG] Wrong triangle count! -5 seconds")
@@ -572,5 +613,3 @@ class RiddleToggles(BaseTogglePhase):
             except Exception as e:
                 print(f"[ERROR] RiddleToggles: {e}")
             sleep(0.1)
-
-        

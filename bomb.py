@@ -1,3 +1,4 @@
+@ -1,265 +1,293 @@
 #################################
 # CSC 102 Defuse the Bomb Project
 # Main program
@@ -17,8 +18,6 @@ cheese_available = False
 cheese_collected = False
 cheese_timer_id = None
 
-
-
 ###########
 # generates the bootup sequence on the LCD
 def handle_riddle_strike():
@@ -33,9 +32,6 @@ def advance_phase():
     global current_phase_index
     current_phase_index += 1
 
-    if current_phase_index >= len(phase_order):
-        print("[DEBUG] All phases completed.")
-        return
     # ✅ Activate the phase you just moved to
     phase = phase_order[current_phase_index]
     if phase == "riddle":
@@ -48,9 +44,6 @@ def advance_phase():
         triangle_puzzle._running = True
 
     gui.after(200, show_current_phase)
-    
-    print(f"[DEBUG] Advancing to phase: {phase_order[current_phase_index]}")
-
 
 
 def bootup(n=0):
@@ -73,8 +66,7 @@ def setup_phases():
     timer = Timer(component_7seg, COUNTDOWN)
     gui.setTimer(timer)
 
-    keypad = Keypad(component_keypad, "8")
-    
+    keypad = Keypad(component_keypad, keypad_target)
     wires = Wires(component_wires, wires_target)
     triangle_puzzle = TrianglePuzzle(6, timer, keypad)  # Use your actual triangle count
     button = Button(component_button_state, component_button_RGB, button_target, button_color, timer, triangle_puzzle)
@@ -123,20 +115,6 @@ def check_phases():
     
     if (keypad._running):
         gui._lkeypad["text"] = f"Combination: {keypad}"
-        
-    if keypad._defused and keypad._running:
-        print("[DEBUG] Keypad defused")
-        keypad._running = False
-        gui.clearPuzzle("keypad")
-    
-        global current_phase_index
-        if current_phase_index == 0:
-            current_phase_index = 1
-        advance_phase()
-
-
-
-
     
     if triangle_puzzle._running:
         gui._lkeypad["text"] = f"Your Count: {keypad._value}"
@@ -158,30 +136,37 @@ def check_phases():
         return
     # check the keypad
     if (keypad._running):
-        gui._lkeypad["text"] = f"Keypad: {keypad}"
-
-    elif (keypad._failed):
-        strike()
-        keypad._failed = False
+        # update the GUI
+        gui._lkeypad["text"] = f"Combination: {keypad}"
+        # the phase is defused -> stop the thread
+        if (keypad._defused):
+            keypad._running = False
+            active_phases -= 1
+        # the phase has failed -> strike
+        elif (keypad._failed):
+            strike()
+            # reset the keypad
+            keypad._failed = False
+            keypad._value = ""
     # check the wires
     if (wires._running):
+        # update the GUI
         gui._lwires["text"] = f"Wires: {wires}"
-
-        if wires._value == "10101":
-            wires._defused = True
+        # the phase is defused -> stop the thread
+        if (wires._defused):
             wires._running = False
-            gui.clearPuzzle("wires")
+            active_phases -= 1
+        
+    if (wires._defused):
+        wires._running = False
+        active_phases -= 1
+        activate_cheese_powerup()
 
-            global cheese_available
-            cheese_available = True
-            gui.showCheeseMessage("🧀 Cheese appeared! Press * on the keypad to collect.")
-
-
-        elif wires._failed:
+        # the phase has failed -> strike
+        elif (wires._failed):
             strike()
+            # reset the wires
             wires._failed = False
-
-
     # check the button
     if (button._running):
         # update the GUI
@@ -246,7 +231,7 @@ def deactivate_cheese_powerup():
     global cheese_available
     cheese_available = False
     gui.showCheeseMessage("Cheese disappeared.")
-    
+
 def collect_cheese_powerup():
     global cheese_available, cheese_collected
     if cheese_available and not cheese_collected:
@@ -254,9 +239,6 @@ def collect_cheese_powerup():
         cheese_available = False
         timer._value += 5
         gui.showCheeseMessage("Cheese collected! +5 seconds added.")
-        gui.after(2000, advance_phase)  # show message briefly, then continue
-
-
 
 
 
